@@ -1,4 +1,4 @@
-// some standard libraries that are helpfull for reading/writing text files
+// some standard libraries that are helpful for reading/writing text files
 #include <iostream>
 #include <fstream>
 #include <string>
