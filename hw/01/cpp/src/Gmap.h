@@ -56,8 +56,15 @@ struct Vertex {
   Vertex(const double &x, const double &y, const double &z) : point(Point(x,y,z))
   {}
 
+  //operator to print the vertices
+  friend std::ostream& operator<<(std::ostream &os, const  Vertex& rhs){  //for struct output
+        os << "Vertex = " << rhs.point;
+        return os;
+    }
+
   // a dart incident to this Vertex:
   // ...
+
 
 };
 
@@ -67,6 +74,12 @@ struct Edge {
 
   // function to compute the barycenter for this Edge (needed for triangulation output):
   // Point barycenter() {}
+
+//  //operator to print the edges
+//    friend std::ostream& operator<<(std::ostream &os, const  Edge& rhs){  //for struct output
+//        os << "Edge = " << rhs.;
+//        return os;
+//    }
 };
 
 struct Face {
@@ -76,10 +89,22 @@ struct Face {
   // function to compute the barycenter for this Face (needed for triangulation output):
   // Point barycenter() {}
 
+//    //operator to print the Faces
+//    friend std::ostream& operator<<(std::ostream &os, const  Face& rhs){  //for struct output
+//        os << "Face = " << rhs.point;
+//        return os;
+//    }
+
 };
 
 struct Volume {
   // a dart incident to this Volume:
   // ...
+
+//    //operator to print the vertices
+//    friend std::ostream& operator<<(std::ostream &os, const  Volume& rhs){  //for struct output
+//        os << "Volume  = " << rhs.;
+//        return os;
+//    }
 
 };
