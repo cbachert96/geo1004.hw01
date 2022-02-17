@@ -18,8 +18,6 @@ int main(int argc, const char * argv[]) {
 
 
   // ## Read OBJ file ##
-
-  //read obj file:
     std::ifstream stream_in;
     stream_in.open(file_in);
     std::vector<Vertex> vertices;
@@ -38,24 +36,26 @@ int main(int argc, const char * argv[]) {
                 else vertices.emplace_back();
             }
             //for faces : similar too the vertices we need to retrieve the faces from the OBJ file and store them in the vector faces, made out of Face
+            std::vector<int> indices;
             if (word == "f") {
-                std::vector<int> indices;
                 while (iss >> word) indices.push_back(std::stoi(word));
-                for (auto indice :indices){
-                    std::cout<<indice<<" ";
-//                    faces.emplace_back(indice);
-                }
-                std::cout<<std::endl;
             }
+            faces.emplace_back(indices);
         }
     }
 
     // to print size of vector
     std::cout<<vertices.size();
+    std::cout<<faces.size();
 
-    // print all vertices in the vector vertices
+////     print all vertices in the vector vertices
 //    for (auto vertice : vertices){
 //        std::cout<<vertice<<std::endl;
+//    }
+
+//    //     print all faces in the vector faces still a bit problematic
+//    for (const auto& face : faces){
+//        std::cout<<face<<std::endl;
 //    }
 
 
