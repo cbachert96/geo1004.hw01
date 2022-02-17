@@ -83,6 +83,13 @@ struct Edge {
 };
 
 struct Face {
+
+    // int of indice of coordinate it's referring to. Could also be a pointer to this indice, might has to be a vector of indices.
+   std::vector<int> faces;
+
+    // constructor without arguments
+    Face() : faces(std::vector<int>())
+    {}
   // a dart incident to this Face:
   // ...
 
