@@ -8,7 +8,6 @@
 
 int id =0;
 
-
 int main(int argc, const char * argv[]) {
     std::string file_in = "torus.obj";
     std::string file_out_obj = "torus_triangulated.obj";
@@ -37,24 +36,35 @@ int main(int argc, const char * argv[]) {
                 else vertices.emplace_back();
             }
             //for faces : similar too the vertices we need to retrieve the faces from the OBJ file and store them in the vector faces, made out of Face
-            std::vector<Vertex> indices;
+
             if (word == "f") {
+                std::vector<Vertex> indices;
                 while (iss >> word) indices.push_back(vertices[std::stoi(word)]);
-                std::cout<<vertices[std::stoi(word)];
+                std::cout<<indices.size();
+                faces.emplace_back(indices);
+                for (auto face: indices){
+                    std::cout<<face<<std::endl;
+                }
             }
-            faces.emplace_back(indices);
         }
     }
-    std::cout<<faces.size();
 
+std::cout<<faces.size();
 //     print all vertices in the vector vertices
 //    for (auto vertice : vertices){
 //        std::cout<<vertice<<std::endl;
 //    }
 
-//    for (auto face: faces){
-//        std::cout<<face<<std::endl;
-//    }
+    for (auto &face: faces){
+            std::cout<<face<<std::endl;
+        }
+
+//        std::cout<<face.point<<std::endl;
+//        for(auto help : face){
+//            std::cout<<"what";
+//            std::cout<<help.point<<std::endl;
+//        }
+
 
     //vertex output
     std::ofstream vertice_output;
