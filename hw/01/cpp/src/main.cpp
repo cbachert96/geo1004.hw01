@@ -9,13 +9,13 @@
 int id =0;
 
 int main(int argc, const char * argv[]) {
-    std::string file_in = "torus.obj";
-    std::string file_out_obj = "torus_triangulated.obj";
-    std::string file_out_csv_d = "torus_darts.csv";
-    std::string file_out_csv_0 = "torus_vertices.csv";
-    std::string file_out_csv_1 = "torus_edges.csv";
-    std::string file_out_csv_2 = "torus_faces.csv";
-    std::string file_out_csv_3 = "torus_volume.csv";
+    std::string file_in = "../../data/torus.obj";
+    std::string file_out_obj = "../../data/torus_triangulated.obj";
+    std::string file_out_csv_d = "../../data/torus_darts.csv";
+    std::string file_out_csv_0 = "../../data/torus_vertices.csv";
+    std::string file_out_csv_1 = "../../data/torus_edges.csv";
+    std::string file_out_csv_2 = "../../data/torus_faces.csv";
+    std::string file_out_csv_3 = "../../data/torus_volume.csv";
 
     // ## Read OBJ file ##
     std::ifstream stream_in;
@@ -67,13 +67,13 @@ std::cout<<faces.size();
 
 
     //vertex output
-    std::ofstream vertice_output;
-    vertice_output.open (file_out_csv_0);
-    vertice_output << "ID, dart, x, y, z\n";
-    for (auto vertice : vertices){
-        vertice_output<<id++<<", "<<"dart"<<", "<<vertice.x <<", "<<vertice.y<<", "<<vertice.z<<std::endl;
+    std::ofstream vertices_output;
+    vertices_output.open (file_out_csv_0);
+    vertices_output << "ID, dart, x, y, z\n";
+    for (auto vertex : vertices){
+        vertices_output<<id++<<", "<<"dart"<<", "<<vertex.x <<", "<<vertex.y<<", "<<vertex.z<<std::endl;
     }
-    vertice_output.close();
+    vertices_output.close();
 
 //    //Dart output
 //    std::ofstream dart_output;
