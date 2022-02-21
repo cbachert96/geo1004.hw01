@@ -94,11 +94,27 @@ struct Edge {
 
 struct Face {
     // int of indice of coordinate it's referring to. Could also be a pointer to this indice, might has to be a vector of indices.
-   std::vector<Vertex*> faces;
+    std::vector<Vertex> faces;
 
     // constructor with arguments
-    Face(const std::vector<Vertex*>& vector) : faces(std::vector<Vertex*>())
+    Face(const std::vector<Vertex>& vector) : faces(std::vector<Vertex>())
     {}
+
+//    friend std::ostream& operator << (std::ostream& os, const std::vector<Vertex>& v)
+//    {
+//        os << "[";
+//        for (typename std::vector<Vertex>::const_iterator ii = v.begin(); ii != v.end(); ++ii)
+//        {
+//            os << " " << *ii;
+//        }
+//        os << "]";
+//        return os;
+//    }
+//    //operator to print the vertices
+//    friend std::ostream& operator<<(std::ostream &os, const  Face& rhs){  //for struct output
+//        os << "Vertex = " << rhs.faces;
+//        return os;
+//    }
 
   // a dart incident to this Face:
   // ...

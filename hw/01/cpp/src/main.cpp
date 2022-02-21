@@ -18,7 +18,6 @@ int main(int argc, const char * argv[]) {
     std::string file_out_csv_2 = "torus_faces.csv";
     std::string file_out_csv_3 = "torus_volume.csv";
 
-
     // ## Read OBJ file ##
     std::ifstream stream_in;
     stream_in.open(file_in);
@@ -38,19 +37,24 @@ int main(int argc, const char * argv[]) {
                 else vertices.emplace_back();
             }
             //for faces : similar too the vertices we need to retrieve the faces from the OBJ file and store them in the vector faces, made out of Face
-            std::vector<int> indices;
+            std::vector<Vertex> indices;
             if (word == "f") {
-                while (iss >> word) indices.push_back(std::stoi(word));
+                while (iss >> word) indices.push_back(vertices[std::stoi(word)]);
+                std::cout<<vertices[std::stoi(word)];
             }
             faces.emplace_back(indices);
         }
-
     }
+    std::cout<<faces.size();
 
 //     print all vertices in the vector vertices
-    for (auto vertice : vertices){
-        std::cout<<vertice<<std::endl;
-    }
+//    for (auto vertice : vertices){
+//        std::cout<<vertice<<std::endl;
+//    }
+
+//    for (auto face: faces){
+//        std::cout<<face<<std::endl;
+//    }
 
     //vertex output
     std::ofstream vertice_output;
@@ -79,14 +83,17 @@ int main(int argc, const char * argv[]) {
 //    }
 //    edge_output.close();
 //
-//    //face output
-//    std::ofstream face_output;
-//    face_output.open (file_out_csv_2);
-//    face_output << "ID, dart, x, y, z\n";
-//    for (auto face : faces){
-//        face_output<<id++<<", "<<"dart"<<", "<<vertice.x <<", "<<vertice.y<<", "<<vertice.z<<std::endl;
-//    }
-//    face_output.close();
+    //face output
+    std::ofstream face_output;
+    face_output.open (file_out_csv_2);
+    face_output << "ID, dart, x, y, z\n";
+    for (auto face : faces){
+        for(auto vertex: face.faces)
+            face_output<<id++<<", "<< vertex.point << std::endl;
+//            std::cout<<vertex<<std::endl;
+
+    }
+    face_output.close();
 //
 //    //volume output
 //    std::ofstream volume_output;
@@ -96,7 +103,6 @@ int main(int argc, const char * argv[]) {
 //        volume_output<<id++<<", "<<"dart"<<", "<<vertice.x <<", "<<vertice.y<<", "<<vertice.z<<std::endl;
 //    }
 //    volume_output.close();
-
 
 
   // ## Construct generalised map using the structures from Gmap.h ##
