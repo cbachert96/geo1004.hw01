@@ -36,7 +36,9 @@ Then you could create and link Darts like:
 */
 
 struct Dart {
+    //ID, involutions(previous dart, next dart and the one opposing it) 0-cell (vertex), 1-cell(edge) 2-cell(face)
   // involutions:
+
   // ..
 
   // cells:
@@ -45,16 +47,22 @@ struct Dart {
 };
 
 struct Vertex {
+    //ID, dart, x, y
   // the coordinates of this vertex:
   Point point;
+  double x{};
+  double y{};
+  double z{};
 
   // constructor without arguments
-  Vertex() : point(Point()) 
+  Vertex() : point(Point())
   {}
 
-  // constructor with x,y,z arguments to immediately initialise the point member on this Vertex.
-  Vertex(const double &x, const double &y, const double &z) : point(Point(x,y,z))
-  {}
+  Vertex(const double &x, const double &y, const double &z) : point(Point(x,y,z)){
+      this-> x = x;
+      this-> y = y;
+      this-> z = z;
+  }
 
   //operator to print the vertices
   friend std::ostream& operator<<(std::ostream &os, const  Vertex& rhs){  //for struct output
@@ -83,58 +91,19 @@ struct Edge {
 //    }
 };
 
-struct Face {
 
+struct Face {
     // int of indice of coordinate it's referring to. Could also be a pointer to this indice, might has to be a vector of indices.
    std::vector<int> faces;
 
-    // constructor without arguments
+    // constructor with arguments
     Face(const std::vector<int>& vector) : faces(std::vector<int>())
     {}
+
   // a dart incident to this Face:
   // ...
   // function to compute the barycenter for this Face (needed for triangulation output):
   // Point barycenter() {}
-
-//Issues with printing the faces, not neccesary for code but could be nice for debugging.
-//        friend std::ostream& operator<<(std::ostream &os, const  Face& rhs){  //for struct output
-//        os << "Face = " << rhs.faces[0]<< std::endl;
-//        return os;
-//    }
-//    friend std::ostream& operator<<(std::ostream& stream, const std::vector<int>& faces)
-//    {
-//        stream << "[ ";
-//        copy( begin(faces), end(faces), std::ostreambuf_iterator<int>(stream, " ") );
-//        stream << ']';
-//        return stream;
-//    }
-
-    //operator to print the Faces
-
-//    friend std::ostream& operator<< (std::ostream& out, const std::vector<int>& v) {
-//        out << "[";
-//        size_t last = v.size() - 1;
-//        for (size_t i = 0; i < v.size(); ++i) {
-//            out << v.faces[i];
-//            if (i != last)
-//                out << ", ";
-//        }
-//        out << "]";
-//        return out;
-//    }
-
-//    friend std::ostream& operator<<(std::ostream &os, const  Face& rhs){  //for struct output
-//        os << "Face = " << rhs.faces[0];
-//        return os;
-//    }
-
-//    std::ostream& operator<<(std::ostream& out, const Memory& mem) {
-//        int curr(mem.get_current());
-//        for (int i = 0; i <= curr; ++i) {
-//            out << mem.mem_[i] << std::endl;
-//        }
-//        return out;
-//    }
 
 };
 

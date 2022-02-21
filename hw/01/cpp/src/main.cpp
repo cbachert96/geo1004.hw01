@@ -4,8 +4,10 @@
 #include <string>
 #include <vector>
 #include <sstream>
-
 #include "Gmap.h"
+
+int id =0;
+
 
 int main(int argc, const char * argv[]) {
     std::string file_in = "torus.obj";
@@ -17,7 +19,7 @@ int main(int argc, const char * argv[]) {
     std::string file_out_csv_3 = "torus_volume.csv";
 
 
-  // ## Read OBJ file ##
+    // ## Read OBJ file ##
     std::ifstream stream_in;
     stream_in.open(file_in);
     std::vector<Vertex> vertices;
@@ -42,21 +44,59 @@ int main(int argc, const char * argv[]) {
             }
             faces.emplace_back(indices);
         }
+
     }
 
-    // to print size of vector
-    std::cout<<vertices.size();
-    std::cout<<faces.size();
+//     print all vertices in the vector vertices
+    for (auto vertice : vertices){
+        std::cout<<vertice<<std::endl;
+    }
 
-////     print all vertices in the vector vertices
-//    for (auto vertice : vertices){
-//        std::cout<<vertice<<std::endl;
-//    }
+    //vertex output
+    std::ofstream vertice_output;
+    vertice_output.open (file_out_csv_0);
+    vertice_output << "ID, dart, x, y, z\n";
+    for (auto vertice : vertices){
+        vertice_output<<id++<<", "<<"dart"<<", "<<vertice.x <<", "<<vertice.y<<", "<<vertice.z<<std::endl;
+    }
+    vertice_output.close();
 
-//    //     print all faces in the vector faces still a bit problematic
-//    for (const auto& face : faces){
-//        std::cout<<face<<std::endl;
+//    //Dart output
+//    std::ofstream dart_output;
+//    dart_output.open (file_out_csv_d);
+//    dart_output << "ID, a0, a1, a2, a3, v, e, f\n";
+//    for (auto dart : darts){
+//        dart_output<<id++<<", "<<"dart"<<", "<<vertice.x <<", "<<vertice.y<<", "<<vertice.z<<std::endl;
 //    }
+//    dart_output.close();
+
+//    //edge output
+//    std::ofstream edge_output;
+//    edge_output.open (file_out_csv_1);
+//    edge_output << "ID, dart, x, y, z\n";
+//    for (auto edge : edges){
+//        edge_output<<id++<<", "<<"dart"<<", "<<vertice.x <<", "<<vertice.y<<", "<<vertice.z<<std::endl;
+//    }
+//    edge_output.close();
+//
+//    //face output
+//    std::ofstream face_output;
+//    face_output.open (file_out_csv_2);
+//    face_output << "ID, dart, x, y, z\n";
+//    for (auto face : faces){
+//        face_output<<id++<<", "<<"dart"<<", "<<vertice.x <<", "<<vertice.y<<", "<<vertice.z<<std::endl;
+//    }
+//    face_output.close();
+//
+//    //volume output
+//    std::ofstream volume_output;
+//    volume_output.open (file_out_csv_1);
+//    volume_output << "ID, dart, x, y, z\n";
+//    for (auto volume : volumes){
+//        volume_output<<id++<<", "<<"dart"<<", "<<vertice.x <<", "<<vertice.y<<", "<<vertice.z<<std::endl;
+//    }
+//    volume_output.close();
+
 
 
   // ## Construct generalised map using the structures from Gmap.h ##
