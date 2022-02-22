@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Point.h"
-
 struct Point;
 struct Dart;
 struct Vertex;
 struct Edge;
 struct Face;
 struct Volume;
+struct index_Face;
 
 /*
 Below you find the basic elements that you need to build the generalised map.
@@ -50,7 +50,6 @@ struct Dart {
 };
 
 struct Vertex {
-    //ID, dart, x, y
   // the coordinates of this vertex:
   Point point;
   double x{};
@@ -95,39 +94,55 @@ struct Edge {
 //    }
 };
 
+struct index_Face{
+    // int of indice of coordinate it's referring to. Could also be a pointer to this indice, might has to be a vector of indices.
+    int llcorner;
+    int lrcorner;
+    int rurcorner;
+    int lurcorner;
+
+    // constructor with arguments
+    index_Face(const int &llcorner, const int &lrcorner, const int &rurcorner, const int &lurcorner){
+        this -> llcorner = llcorner;
+        this -> lrcorner = lrcorner;
+        this -> rurcorner = rurcorner;
+        this -> lurcorner = lurcorner;
+    }
+    friend std::ostream& operator<< (std::ostream& os, const index_Face&a){
+        os<< a.llcorner<<", "<< a.lrcorner << ", "<<a.rurcorner<<", "<<a.lurcorner;
+        return os;
+    }
+
+};
+// This is something we might want to implement in the future, where index_Face is a vector instead of 4 integers
+//struct index_Face{
+//    // int of indice of coordinate it's referring to. Could also be a pointer to this indice, might has to be a vector of indices.
+//    std::vector<int> faces;
+//
+//    // constructor with arguments
+//    index_Face(const std::vector<int>& hallo) : faces(std::vector<int>()){
+////        this -> faces = faces;
+//    }
+//    friend std::ostream& operator<< (std::ostream& os, const index_Face&a){
+//        os<<a.faces.size();
+//        for (auto& e : a.faces) os << e;
+//        return os;
+//    }
+//};
+
 struct Face {
     // int of indice of coordinate it's referring to. Could also be a pointer to this indice, might has to be a vector of indices.
     std::vector<Vertex> faces;
 
     // constructor with arguments
-    Face(const std::vector<Vertex>& vector) : faces(std::vector<Vertex>()){
-        this -> faces = faces;
+    Face(const std::vector<Vertex>& faces){
+        this-> faces = faces;
     }
-
+    //ostream operator, prints the point in the Vertex
     friend std::ostream& operator<< (std::ostream& os, const Face&a){
-//       os << "test";
-//            os<<a.faces.size();
-
-
-//        for (auto& e : a) os << "trial ";
+        for (auto& e : a.faces) os << e.point;
         return os;
     }
-
-//    friend std::ostream& operator << (std::ostream& os, const std::vector<Vertex>& v)
-//    {
-//        os << "[";
-//        for (typename std::vector<Vertex>::const_iterator ii = v.begin(); ii != v.end(); ++ii)
-//        {
-//            os << " " << *ii;
-//        }
-//        os << "]";
-//        return os;
-//    }
-//    //operator to print the vertices
-//    friend std::ostream& operator<<(std::ostream &os, const  Face& rhs){  //for struct output
-//        os << "Vertex = " << rhs.faces;
-//        return os;
-//    }
 
   // a dart incident to this Face:
   // ...

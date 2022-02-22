@@ -22,6 +22,7 @@ int main(int argc, const char * argv[]) {
     stream_in.open(file_in);
     std::vector<Vertex> vertices;
     std::vector<Face> faces;
+    std::vector<index_Face> indices ;
     if (stream_in.is_open()) {
         std::string line;
         while (getline(stream_in, line)) {
@@ -35,45 +36,63 @@ int main(int argc, const char * argv[]) {
                 if (coordinates.size() == 3) vertices.emplace_back(coordinates[0], coordinates[1], coordinates[2]);
                 else vertices.emplace_back();
             }
-            //for faces : similar too the vertices we need to retrieve the faces from the OBJ file and store them in the vector faces, made out of Face
 
+            //for faces : similar too the vertices we need to retrieve the faces from the OBJ file and store them in the vector faces, made out of Face
             if (word == "f") {
-                std::vector<Vertex> indices;
-                while (iss >> word) indices.push_back(vertices[std::stoi(word)]);
-                std::cout<<indices.size();
-                faces.emplace_back(indices);
-                for (auto face: indices){
-                    std::cout<<face<<std::endl;
-                }
+                //vector to hold the 4 vertices of a Face
+                std::vector<Vertex> face_points;
+                //used indexes to get Vertex value.
+                while (iss >> word) face_points.push_back((vertices[std::stoi(word)-1]));
+                // place the vector of Vertices in vector faces
+                faces.emplace_back(face_points);
+            }
+        }
+    }
+    //another stream, because I can't get the previous thing to read the if(word =="f") part twice
+    std::ifstream stream_in_2;
+    stream_in_2.open(file_in);
+    if (stream_in_2.is_open()) {
+        std::string line;
+        while (getline(stream_in_2, line)) {
+            std::istringstream iss(line);
+            std::string word;
+            iss >> word;
+            if (word == "f") {
+                //vector that holds the indices of the faces, other thant the previous that stores the vertexes itself.
+                std::vector<int> face_indices;
+                //loop through the line
+                while (iss >> word) face_indices.push_back(std::stoi(word));
+                //place the indexes in the
+                indices.emplace_back(face_indices[0], face_indices[1], face_indices[2], face_indices[3]);
             }
         }
     }
 
-std::cout<<faces.size();
+    // to print the index_Faces
+//    for (auto index: indices){
+//        std::cout<<index<<std::endl;
+//    }
+
+
 //     print all vertices in the vector vertices
 //    for (auto vertice : vertices){
 //        std::cout<<vertice<<std::endl;
 //    }
 
-    for (auto &face: faces){
-            std::cout<<face<<std::endl;
-        }
-
-//        std::cout<<face.point<<std::endl;
-//        for(auto help : face){
-//            std::cout<<"what";
-//            std::cout<<help.point<<std::endl;
+//        // Print all Faces
+//        for (auto &face: faces) {
+//            std::cout << face << std::endl;
 //        }
 
-
-    //vertex output
-    std::ofstream vertice_output;
-    vertice_output.open (file_out_csv_0);
-    vertice_output << "ID, dart, x, y, z\n";
-    for (auto vertice : vertices){
-        vertice_output<<id++<<", "<<"dart"<<", "<<vertice.x <<", "<<vertice.y<<", "<<vertice.z<<std::endl;
-    }
-    vertice_output.close();
+        //vertex output
+        std::ofstream vertice_output;
+        vertice_output.open(file_out_csv_0);
+        vertice_output << "ID, dart, x, y, z\n";
+        for (auto vertice: vertices) {
+            vertice_output << id++ << ", " << "dart" << ", " << vertice.x << ", " << vertice.y << ", " << vertice.z
+                           << std::endl;
+        }
+        vertice_output.close();
 
 //    //Dart output
 //    std::ofstream dart_output;
@@ -93,17 +112,17 @@ std::cout<<faces.size();
 //    }
 //    edge_output.close();
 //
-    //face output
-    std::ofstream face_output;
-    face_output.open (file_out_csv_2);
-    face_output << "ID, dart, x, y, z\n";
-    for (auto face : faces){
-        for(auto vertex: face.faces)
-            face_output<<id++<<", "<< vertex.point << std::endl;
+        //face output
+        std::ofstream face_output;
+        face_output.open(file_out_csv_2);
+        face_output << "ID, dart, x, y, z\n";
+        for (auto &face: faces) {
+            for (auto vertex: face.faces)
+                face_output << id++ << ", " << vertex.x << std::endl;
 //            std::cout<<vertex<<std::endl;
 
-    }
-    face_output.close();
+        }
+        face_output.close();
 //
 //    //volume output
 //    std::ofstream volume_output;
@@ -115,13 +134,13 @@ std::cout<<faces.size();
 //    volume_output.close();
 
 
-  // ## Construct generalised map using the structures from Gmap.h ##
+        // ## Construct generalised map using the structures from Gmap.h ##
 
-  // ## Output generalised map to CSV ##
+        // ## Output generalised map to CSV ##
 
-  // ## Create triangles from the darts ##
+        // ## Create triangles from the darts ##
 
-  // ## Write triangles to obj ##
+        // ## Write triangles to obj ##
 
-  return 0;
-}
+        return 0;
+    }
