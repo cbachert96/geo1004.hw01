@@ -104,36 +104,35 @@ int main(int argc, const char * argv[]) {
             if (i ==0){
                 int alpha_0_dart_1 = dart_1 +1;
                 auto alpha_1_dart_1 = dart_1 + (2*face.vertices.size()-1);
-                int alpha_2_dart_1 = ;
-                int alpha_3_dart_1 = ;
-                int alpha_0_dart_2 = ;
-                int alpha_1_dart_2 = ;
-                int alpha_2_dart_2 = ;
-                int alpha_3_dart_2 = ;
-
+                int alpha_2_dart_1 = 0;
+                int alpha_3_dart_1 = 0;
+                int alpha_0_dart_2 = dart_2 -1;
+                int alpha_1_dart_2 = dart_2 +1;
+                int alpha_2_dart_2 = 0;
+                int alpha_3_dart_2 = 0;
             }
 
             //if we're at the final vertex, the last dart, let's say 7 needs to have 0 as the next, and not 8
             else if (i == face.vertices.size()-1){
-                int alpha_0_dart_1 = ;
-                int alpha_1_dart_1 = ;
-                int alpha_2_dart_1 = ;
-                int alpha_3_dart_1 = ;
-                int alpha_0_dart_2 = ;
-                int alpha_1_dart_2 = ;
-                auto alpha_2_dart_2 = dart_2 + (2*face.vertices.size()+1);
-                int alpha_3_dart_2 = ;
+                auto alpha_0_dart_1 = dart_1 +1;
+                auto alpha_1_dart_1 = dart_1 -1;
+                int alpha_2_dart_1 = 0;
+                int alpha_3_dart_1 = 0;
+                auto alpha_0_dart_2 = dart_2 -1;
+                auto alpha_1_dart_2 = dart_2 + (2*face.vertices.size()+1);
+                auto alpha_2_dart_2 = 0;
+                int alpha_3_dart_2 = 0;
             }
 
             else{
-                int alpha_0_dart_1 = ;
+                auto alpha_0_dart_1 = dart_1 +1;
                 auto alpha_1_dart_1 = dart_1 -1;
-                int alpha_2_dart_1 = ;
-                int alpha_3_dart_1 = ;
-                int alpha_0_dart_2 = ;
-                int alpha_1_dart_2 = ;
-                int alpha_2_dart_2 = ;
-                int alpha_3_dart_2 = ;
+                int alpha_2_dart_1 = 0;
+                int alpha_3_dart_1 = 0;
+                int alpha_0_dart_2 = dart_2 -1;
+                int alpha_1_dart_2 = dart_2 +1;
+                int alpha_2_dart_2 = 0;
+                int alpha_3_dart_2 = 0;
             }
 
             //alpha's of the darts, we'll need to think of how we assign them, perhaps we need another help structure, or assign it later.
