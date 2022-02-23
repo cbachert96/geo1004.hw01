@@ -75,23 +75,28 @@ int main(int argc, const char * argv[]) {
     std::vector<Vertex> test;
     for (auto face: faces){
         auto face_num = face_id++;
-        for (int i = 0; i<face.faces.size(); i++){
+        for (int i = 0; i<face.vertices.size(); i++){
             auto vertex_num = vector_id++;
-            if (i< (face.faces.size() -1)){
-                auto vertice_1 = face.faces[i];
-                auto vertice_2 = face.faces[i+1];
+            if (i< (face.vertices.size() -1)){
+                auto vertice_1 = face.vertices[i];
+                auto vertice_2 = face.vertices[i+1];
             }
             else{
-                auto vertice_1 = face.faces[i];
-                auto vertice_2 = face.faces[0];
+                auto vertice_1 = face.vertices[i];
+                auto vertice_2 = face.vertices[0];
             }
             auto dart_1 = dart_id++;
             auto dart_2 = dart_id++;
             auto edge_num = edge_id++;
 
-
+            int alpha_1_dart_1 = ;
+            int alpha_2_dart_1 = ;
+            int alpha_3_dart_1 = ;
+            int alpha_1_dart_2 = ;
+            int alpha_2_dart_2 = ;
+            int alpha_3_dart_2 = ;
         }
-        test.push_back(face.faces[0]);
+        test.push_back(face.vertices[0]);
     }
 
     for (auto vertice : test){
@@ -146,7 +151,7 @@ int main(int argc, const char * argv[]) {
         face_output.open(file_out_csv_2);
         face_output << "ID, dart, x, y, z\n";
         for (auto &face: faces) {
-            for (auto vertex: face.faces)
+            for (auto vertex: face.vertices)
                 face_output << id++ << ", " << vertex.x << std::endl;
 //            std::cout<<vertex<<std::endl;
 

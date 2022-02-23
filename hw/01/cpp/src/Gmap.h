@@ -132,15 +132,15 @@ struct index_Face{
 
 struct Face {
     // int of indice of coordinate it's referring to. Could also be a pointer to this indice, might has to be a vector of indices.
-    std::vector<Vertex> faces;
+    std::vector<Vertex> vertices;
 
     // constructor with arguments
     Face(const std::vector<Vertex>& faces){
-        this-> faces = faces;
+        this-> vertices = faces;
     }
     //ostream operator, prints the point in the Vertex
     friend std::ostream& operator<< (std::ostream& os, const Face&a){
-        for (auto& e : a.faces) os << e.point;
+        for (auto& e : a.vertices) os << e.point;
         return os;
     }
 
