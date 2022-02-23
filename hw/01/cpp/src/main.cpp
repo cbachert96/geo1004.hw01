@@ -7,6 +7,10 @@
 #include "Gmap.h"
 
 int id =0;
+int dart_id = 0;
+int face_id = 0;
+int edge_id = 0;
+int vector_id = 0;
 
 int main(int argc, const char * argv[]) {
     std::string file_in = "torus.obj";
@@ -68,11 +72,36 @@ int main(int argc, const char * argv[]) {
         }
     }
 
+    std::vector<Vertex> test;
+    for (auto face: faces){
+        auto face_num = face_id++;
+        for (int i = 0; i<face.faces.size(); i++){
+            auto vertex_num = vector_id++;
+            if (i< (face.faces.size() -1)){
+                auto vertice_1 = face.faces[i];
+                auto vertice_2 = face.faces[i+1];
+            }
+            else{
+                auto vertice_1 = face.faces[i];
+                auto vertice_2 = face.faces[0];
+            }
+            auto dart_1 = dart_id++;
+            auto dart_2 = dart_id++;
+            auto edge_num = edge_id++;
+
+
+        }
+        test.push_back(face.faces[0]);
+    }
+
+    for (auto vertice : test){
+        std::cout<<vertice<<std::endl;
+    }
+
     // to print the index_Faces
 //    for (auto index: indices){
 //        std::cout<<index<<std::endl;
 //    }
-
 
 //     print all vertices in the vector vertices
 //    for (auto vertice : vertices){
