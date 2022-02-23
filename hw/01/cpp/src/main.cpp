@@ -72,7 +72,14 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    std::vector<point_Vertex> test;
+    //vectors to hold the output data of the designated types.
+    std::vector<Vertex> output_vertices;
+    std::vector<Face> output_faces;
+    std::vector<Volume> output_volume;
+    std::vector<Edge> output_edges;
+    std::vector<Dart> output_darts;
+
+    //loop through the faces vector to build the structure.
     for (auto face: faces){
         //id for face
         auto face_num = face_id++;
@@ -106,9 +113,6 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    for (auto vertice : test){
-        std::cout<<vertice<<std::endl;
-    }
 
     // to print the index_Faces
 //    for (auto index: indices){
