@@ -1,97 +1,42 @@
 #pragma once
 
 #include "Point.h"
+//help structures
 struct Point;
-struct Dart;
-struct Vertex;
-struct Edge;
-struct Face;
-struct Volume;
+struct vertex_Face;
+struct point_Vertex;
 struct index_Face;
 
-/*
-Below you find the basic elements that you need to build the generalised map.
-The main thing you need to fill out are the links between the elements:
-  * the involutions and cells on the Dart
-  * the darts on the cells
+//output structures
+struct Dart;
+struct Edge;
+struct Face;
+struct Vertex;
+struct Volume;
 
-One way to do this is by using pointers. eg. define a member on the dart struct like
+//help structures:
+struct point_Vertex {
+    // the coordinates of this vertex:
+    Point point;
+    double x{};
+    double y{};
+    double z{};
 
-  Struct Dart {
-    // involutions:
-    Dart* a0 = nullptr;
-    // ...
+    // constructor without arguments
+    point_Vertex() : point(Point())
+    {}
 
-    // cells:
-    // ...
-  
-  };
-Then you could create and link Darts like:
-  Dart* dart_a = new Dart();
-  Dart* dart_b = new Dart();
+    point_Vertex(const double &x, const double &y, const double &z) : point(Point(x,y,z)){
+        this-> x = x;
+        this-> y = y;
+        this-> z = z;
+    }
 
-  dart_a->a0 = dart_b;
-*/
-
-struct Dart {
-//    Point cell_0;//
-//    Edge cell_1;
-//    Face cell_2;
-//    Dart ->previous_dart;
-//    Dart ->nex_dart;
-//    Dart ->opposing_dart;
-//    // involutions:
-
-  // ..
-
-  // cells:
-  // ...
-
-};
-
-struct Vertex {
-  // the coordinates of this vertex:
-  Point point;
-  double x{};
-  double y{};
-  double z{};
-
-  // constructor without arguments
-  Vertex() : point(Point())
-  {}
-
-  Vertex(const double &x, const double &y, const double &z) : point(Point(x,y,z)){
-      this-> x = x;
-      this-> y = y;
-      this-> z = z;
-  }
-
-  //operator to print the vertices
-  friend std::ostream& operator<<(std::ostream &os, const  Vertex& rhs){  //for struct output
+    //operator to print the vertices
+    friend std::ostream& operator<<(std::ostream &os, const  point_Vertex& rhs){  //for struct output
         os << "Vertex = " << rhs.point;
         return os;
     }
-
-  // a dart incident to this Vertex:
-  // ...
-
-};
-
-struct Edge {
-    Point begin_point;
-    Point endpoint;
-
-  // a dart incident to this Edge:
-  // ...
-
-  // function to compute the barycenter for this Edge (needed for triangulation output):
-  // Point barycenter() {}
-
-//  //operator to print the edges
-//    friend std::ostream& operator<<(std::ostream &os, const  Edge& rhs){  //for struct output
-//        os << "Edge = " << rhs.;
-//        return os;
-//    }
 };
 
 struct index_Face{
@@ -114,41 +59,71 @@ struct index_Face{
     }
 
 };
-// This is something we might want to implement in the future, where index_Face is a vector instead of 4 integers
-//struct index_Face{
-//    // int of indice of coordinate it's referring to. Could also be a pointer to this indice, might has to be a vector of indices.
-//    std::vector<int> faces;
-//
-//    // constructor with arguments
-//    index_Face(const std::vector<int>& hallo) : faces(std::vector<int>()){
-////        this -> faces = faces;
-//    }
-//    friend std::ostream& operator<< (std::ostream& os, const index_Face&a){
-//        os<<a.faces.size();
-//        for (auto& e : a.faces) os << e;
-//        return os;
-//    }
-//};
 
-struct Face {
-    // int of indice of coordinate it's referring to. Could also be a pointer to this indice, might has to be a vector of indices.
-    std::vector<Vertex> vertices;
+
+//output structures
+struct Dart {
+    int vertice;
+    int edge;
+    int face;
+    int alpha_0;
+    int alpha_1;
+    int alpha_2;
+    int alpha_3;
 
     // constructor with arguments
-    Face(const std::vector<Vertex>& faces){
-        this-> vertices = faces;
+    Dart(const int &vertice, const int &edge, const int &face, const int &alpha_0, const int &alpha_1, const int &alpha_2, const int &alpha_3){
+        this -> vertice = vertice;
+        this -> edge = edge;
+        this -> face = face;
+        this -> alpha_0 = alpha_0;
+        this -> alpha_1 = alpha_1;
+        this -> alpha_2 = alpha_2;
+        this -> alpha_3 = alpha_3;
     }
-    //ostream operator, prints the point in the Vertex
-    friend std::ostream& operator<< (std::ostream& os, const Face&a){
-        for (auto& e : a.vertices) os << e.point;
+
+    //operator to print the Dart
+    friend std::ostream& operator<<(std::ostream &os, const  Dart& rhs){  //for struct output
+        os << "Vertex = " << rhs.vertice << "edge = " << rhs.edge << "face = " << rhs.face<< "alpha_0 = " << rhs.alpha_0<< "alpha_1 = " << rhs.alpha_1<< "alpha_2 = " << rhs.alpha_2<< "alpha_3 = " << rhs.alpha_3;
         return os;
     }
 
-  // a dart incident to this Face:
+};
+
+
+struct Edge {
+    Point begin_point;
+    Point endpoint;
+
+  // a dart incident to this Edge:
   // ...
-  // function to compute the barycenter for this Face (needed for triangulation output):
+
+  // function to compute the barycenter for this Edge (needed for triangulation output):
   // Point barycenter() {}
 
+//  //operator to print the edges
+//    friend std::ostream& operator<<(std::ostream &os, const  Edge& rhs){  //for struct output
+//        os << "Edge = " << rhs.;
+//        return os;
+//    }
+};
+
+
+
+
+struct vertex_Face {
+    // int of indice of coordinate it's referring to. Could also be a pointer to this indice, might has to be a vector of indices.
+    std::vector<point_Vertex> vertices;
+
+    // constructor with arguments
+    vertex_Face(const std::vector<point_Vertex>& faces){
+        this-> vertices = vertices;
+    }
+    //ostream operator, prints the point in the Vertex
+    friend std::ostream& operator<< (std::ostream& os, const vertex_Face&a){
+        for (auto& e : a.vertices) os << e.point;
+        return os;
+    }
 };
 
 struct Volume {

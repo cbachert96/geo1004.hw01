@@ -24,8 +24,8 @@ int main(int argc, const char * argv[]) {
     // ## Read OBJ file ##
     std::ifstream stream_in;
     stream_in.open(file_in);
-    std::vector<Vertex> vertices;
-    std::vector<Face> faces;
+    std::vector<point_Vertex> vertices;
+    std::vector<vertex_Face> faces;
     std::vector<index_Face> indices ;
     if (stream_in.is_open()) {
         std::string line;
@@ -44,7 +44,7 @@ int main(int argc, const char * argv[]) {
             //for faces : similar too the vertices we need to retrieve the faces from the OBJ file and store them in the vector faces, made out of Face
             if (word == "f") {
                 //vector to hold the 4 vertices of a Face
-                std::vector<Vertex> face_points;
+                std::vector<point_Vertex> face_points;
                 //used indexes to get Vertex value.
                 while (iss >> word) face_points.push_back((vertices[std::stoi(word)-1]));
                 // place the vector of Vertices in vector faces
@@ -72,7 +72,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    std::vector<Vertex> test;
+    std::vector<point_Vertex> test;
     for (auto face: faces){
         auto face_num = face_id++;
         for (int i = 0; i<face.vertices.size(); i++){
