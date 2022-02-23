@@ -79,13 +79,22 @@ int main(int argc, const char * argv[]) {
     std::vector<Edge> output_edges;
     std::vector<Dart> output_darts;
 
+    output_volume.emplace_back(0,0);
+
     //loop through the faces vector to build the structure.
     for (auto face: faces){
         //id for face
         auto face_num = face_id++;
+        auto dart_on_face = dart_id +1;
+        output_faces.emplace_back(face_num, dart_on_face);
         //loop through the vertices in a face, to make the other structures
         for (int i = 0; i<face.vertices.size(); i++){
+            //assign id's, it's just a number that goes up 1 each time it's called.
+            auto dart_1 = dart_id++;
+            auto dart_2 = dart_id++;
             auto vertex_num = vector_id++;
+            auto edge_num = edge_id++;
+
             //two vertices to make an edge in between, 1st with 2nd and so on.
             if (i< (face.vertices.size() -1)){
                 auto vertice_1 = face.vertices[i];
@@ -96,10 +105,8 @@ int main(int argc, const char * argv[]) {
                 auto vertice_1 = face.vertices[i];
                 auto vertice_2 = face.vertices[0];
             }
-            //assign id's to darts, is just a number that goes up 1.
-            auto dart_1 = dart_id++;
-            auto dart_2 = dart_id++;
-            auto edge_num = edge_id++;
+            output_vertices.emplace_back(vertex_num, dart_1, face.vertices[i].x, face.vertices[i].y, face.vertices[i].z);
+            output_edges.emplace_back(edge_num, dart_1);
             //for the first dart, we need the final dart, that's why de do 2* the length of the vector -1. So dart 0 has 7 as alpha_0 in case of 4 vertices.
             if (i ==0){
                 int alpha_0_dart_1 = dart_1 +1;
@@ -110,7 +117,9 @@ int main(int argc, const char * argv[]) {
                 int alpha_1_dart_2 = dart_2 +1;
                 int alpha_2_dart_2 = 0;
                 int alpha_3_dart_2 = 0;
-            }
+                output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_1, alpha_1_dart_1, alpha_2_dart_1, alpha_3_dart_1);
+                output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
+                }
 
             //if we're at the final vertex, the last dart, let's say 7 needs to have 0 as the next, and not 8
             else if (i == face.vertices.size()-1){
@@ -122,8 +131,9 @@ int main(int argc, const char * argv[]) {
                 auto alpha_1_dart_2 = dart_2 + (2*face.vertices.size()+1);
                 auto alpha_2_dart_2 = 0;
                 int alpha_3_dart_2 = 0;
+                output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_1, alpha_1_dart_1, alpha_2_dart_1, alpha_3_dart_1);
+                output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
             }
-
             else{
                 auto alpha_0_dart_1 = dart_1 +1;
                 auto alpha_1_dart_1 = dart_1 -1;
@@ -133,28 +143,11 @@ int main(int argc, const char * argv[]) {
                 int alpha_1_dart_2 = dart_2 +1;
                 int alpha_2_dart_2 = 0;
                 int alpha_3_dart_2 = 0;
+                output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_1, alpha_1_dart_1, alpha_2_dart_1, alpha_3_dart_1);
+                output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
             }
-
-            //alpha's of the darts, we'll need to think of how we assign them, perhaps we need another help structure, or assign it later.
-
         }
     }
-
-
-    // to print the index_Faces
-//    for (auto index: indices){
-//        std::cout<<index<<std::endl;
-//    }
-
-//     print all vertices in the vector vertices
-//    for (auto vertice : vertices){
-//        std::cout<<vertice<<std::endl;
-//    }
-
-//        // Print all Faces
-//        for (auto &face: faces) {
-//            std::cout << face << std::endl;
-//        }
 
         //vertex output
         std::ofstream vertice_output;
@@ -166,14 +159,14 @@ int main(int argc, const char * argv[]) {
         }
         vertice_output.close();
 
-//    //Dart output
-//    std::ofstream dart_output;
-//    dart_output.open (file_out_csv_d);
-//    dart_output << "ID, a0, a1, a2, a3, v, e, f\n";
-//    for (auto dart : darts){
-//        dart_output<<id++<<", "<<"dart"<<", "<<vertice.x <<", "<<vertice.y<<", "<<vertice.z<<std::endl;
-//    }
-//    dart_output.close();
+    //Dart output
+    std::ofstream dart_output;
+    dart_output.open (file_out_csv_d);
+    dart_output << "ID, a0, a1, a2, a3, v, e, f\n";
+    for (auto dart : output_darts){
+        dart_output<<dart.id<<dart.alpha_0<<dart.alpha_1<<dart.alpha_2<<dart.alpha_3<<dart.vertice<<dart.edge<<dart.face<<std::endl;
+    }
+    dart_output.close();
 
 //    //edge output
 //    std::ofstream edge_output;

@@ -99,7 +99,7 @@ struct Dart {
 
     //operator to print the Dart
     friend std::ostream& operator<<(std::ostream &os, const  Dart& rhs){  //for struct output
-        os << "Vertex = " << rhs.vertice << "edge = " << rhs.edge << "face = " << rhs.face<< "alpha_0 = " << rhs.alpha_0<< "alpha_1 = " << rhs.alpha_1<< "alpha_2 = " << rhs.alpha_2<< "alpha_3 = " << rhs.alpha_3;
+        os << "id = "<<rhs.id<< "Vertex = " << rhs.vertice << "edge = " << rhs.edge << "face = " << rhs.face<< "alpha_0 = " << rhs.alpha_0<< "alpha_1 = " << rhs.alpha_1<< "alpha_2 = " << rhs.alpha_2<< "alpha_3 = " << rhs.alpha_3;
         return os;
     }
 };
