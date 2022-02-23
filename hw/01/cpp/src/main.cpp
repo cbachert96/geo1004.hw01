@@ -102,27 +102,42 @@ int main(int argc, const char * argv[]) {
             auto edge_num = edge_id++;
             //for the first dart, we need the final dart, that's why de do 2* the length of the vector -1. So dart 0 has 7 as alpha_0 in case of 4 vertices.
             if (i ==0){
+                int alpha_0_dart_1 = dart_1 +1;
                 auto alpha_1_dart_1 = dart_1 + (2*face.vertices.size()-1);
+                int alpha_2_dart_1 = ;
+                int alpha_3_dart_1 = ;
+                int alpha_0_dart_2 = ;
+                int alpha_1_dart_2 = ;
+                int alpha_2_dart_2 = ;
+                int alpha_3_dart_2 = ;
+
             }
 
             //if we're at the final vertex, the last dart, let's say 7 needs to have 0 as the next, and not 8
             else if (i == face.vertices.size()-1){
+                int alpha_0_dart_1 = ;
+                int alpha_1_dart_1 = ;
+                int alpha_2_dart_1 = ;
+                int alpha_3_dart_1 = ;
+                int alpha_0_dart_2 = ;
+                int alpha_1_dart_2 = ;
                 auto alpha_2_dart_2 = dart_2 + (2*face.vertices.size()+1);
+                int alpha_3_dart_2 = ;
             }
 
             else{
+                int alpha_0_dart_1 = ;
                 auto alpha_1_dart_1 = dart_1 -1;
+                int alpha_2_dart_1 = ;
+                int alpha_3_dart_1 = ;
+                int alpha_0_dart_2 = ;
+                int alpha_1_dart_2 = ;
+                int alpha_2_dart_2 = ;
+                int alpha_3_dart_2 = ;
             }
 
             //alpha's of the darts, we'll need to think of how we assign them, perhaps we need another help structure, or assign it later.
-            int alpha_0_dart_1 = ;
-            int alpha_1_dart_1 = ;
-            int alpha_2_dart_1 = ;
-            int alpha_3_dart_1 = ;
-            int alpha_0_dart_2 = ;
-            int alpha_1_dart_2 = ;
-            int alpha_2_dart_2 = ;
-            int alpha_3_dart_2 = ;
+
         }
     }
 
