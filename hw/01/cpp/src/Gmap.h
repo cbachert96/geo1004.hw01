@@ -14,7 +14,7 @@ struct Face;
 struct Vertex;
 struct Volume;
 
-//help structures:
+//help structures these structures will not be the ouput, but we will use them to make the output structures correctly:
 struct point_Vertex {
     // the coordinates of this vertex:
     Point point;
@@ -57,12 +57,26 @@ struct index_Face{
         os<< a.llcorner<<", "<< a.lrcorner << ", "<<a.rurcorner<<", "<<a.lurcorner;
         return os;
     }
-
 };
 
+struct vertex_Face {
+    // int of indice of coordinate it's referring to. Could also be a pointer to this indice, might has to be a vector of indices.
+    std::vector<point_Vertex> vertices;
 
-//output structures
+    // constructor with arguments
+    vertex_Face(const std::vector<point_Vertex>& vertices){
+        this-> vertices = vertices;
+    }
+    //ostream operator, prints the point in the Vertex
+    friend std::ostream& operator<< (std::ostream& os, const vertex_Face&a){
+        for (auto& e : a.vertices) os << e.point;
+        return os;
+    }
+};
+
+//output structures: these are the actual output structures, prefereably only hold output data.
 struct Dart {
+    int id;
     int vertice;
     int edge;
     int face;
@@ -72,7 +86,8 @@ struct Dart {
     int alpha_3;
 
     // constructor with arguments
-    Dart(const int &vertice, const int &edge, const int &face, const int &alpha_0, const int &alpha_1, const int &alpha_2, const int &alpha_3){
+    Dart(const int &id, const int &vertice, const int &edge, const int &face, const int &alpha_0, const int &alpha_1, const int &alpha_2, const int &alpha_3){
+        this -> id =id;
         this -> vertice = vertice;
         this -> edge = edge;
         this -> face = face;
@@ -87,45 +102,69 @@ struct Dart {
         os << "Vertex = " << rhs.vertice << "edge = " << rhs.edge << "face = " << rhs.face<< "alpha_0 = " << rhs.alpha_0<< "alpha_1 = " << rhs.alpha_1<< "alpha_2 = " << rhs.alpha_2<< "alpha_3 = " << rhs.alpha_3;
         return os;
     }
-
 };
 
+struct Vertex{
+    int id;
+    int dart;
+    float x;
+    float y;
+    float z;
 
-struct Edge {
-    Point begin_point;
-    Point endpoint;
-
-  // a dart incident to this Edge:
-  // ...
-
-  // function to compute the barycenter for this Edge (needed for triangulation output):
-  // Point barycenter() {}
-
-//  //operator to print the edges
-//    friend std::ostream& operator<<(std::ostream &os, const  Edge& rhs){  //for struct output
-//        os << "Edge = " << rhs.;
-//        return os;
-//    }
-};
-
-
-
-
-struct vertex_Face {
-    // int of indice of coordinate it's referring to. Could also be a pointer to this indice, might has to be a vector of indices.
-    std::vector<point_Vertex> vertices;
-
-    // constructor with arguments
-    vertex_Face(const std::vector<point_Vertex>& faces){
-        this-> vertices = vertices;
+    Vertex(const int &id, const int&dart, const float&x, const float &y, const float &z){
+        this -> id = id;
+        this -> dart = dart;
+        this -> x = x;
+        this -> y = y;
+        this -> z = z;
     }
-    //ostream operator, prints the point in the Vertex
-    friend std::ostream& operator<< (std::ostream& os, const vertex_Face&a){
-        for (auto& e : a.vertices) os << e.point;
+    friend std::ostream & operator<<(std::ostream &os, const Vertex&rhs){
+        os<< "id = "<< rhs.id<< "dart = "<<rhs.dart<< "x = "<<rhs.x<< "y = "<<rhs.y<< "z = "<<rhs.z;
+        return os;
+    }
+};
+struct Edge {
+    int id;
+    int dart;
+
+    Edge(const int &id, const int&dart){
+        this -> id = id;
+        this -> dart = dart;
+    }
+    friend std::ostream & operator<<(std::ostream &os, const Edge&rhs){
+        os<< "id = "<< rhs.id<< "dart = "<<rhs.dart;
+        return os;
+    }
+
+};
+
+struct Face{
+    int id;
+    int dart;
+
+    Face(const int &id, const int&dart){
+        this -> id = id;
+        this -> dart = dart;
+    }
+    friend std::ostream & operator<<(std::ostream &os, const Face&rhs){
+        os<< "id = "<< rhs.id<< "dart = "<<rhs.dart;
+        return os;
+    }
+
+};
+struct Volume {
+    int id;
+    int dart;
+
+    Volume(const int &id, const int&dart){
+        this -> id = id;
+        this -> dart = dart;
+    }
+    friend std::ostream & operator<<(std::ostream &os, const Volume&rhs){
+        os<< "id = "<< rhs.id<< "dart = "<<rhs.dart;
         return os;
     }
 };
 
-struct Volume {
-    Dart dart;
-};
+
+

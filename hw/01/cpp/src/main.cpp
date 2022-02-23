@@ -74,29 +74,36 @@ int main(int argc, const char * argv[]) {
 
     std::vector<point_Vertex> test;
     for (auto face: faces){
+        //id for face
         auto face_num = face_id++;
+        //loop through the vertices in a face, to make the other structures
         for (int i = 0; i<face.vertices.size(); i++){
             auto vertex_num = vector_id++;
+            //two vertices to make an edge in between, 1st with 2nd and so on.
             if (i< (face.vertices.size() -1)){
                 auto vertice_1 = face.vertices[i];
                 auto vertice_2 = face.vertices[i+1];
             }
+            //if we are at the final vertice, we also need to make an edge between the final and first one.
             else{
                 auto vertice_1 = face.vertices[i];
                 auto vertice_2 = face.vertices[0];
             }
+            //assign id's to darts, is just a number that goes up 1.
             auto dart_1 = dart_id++;
             auto dart_2 = dart_id++;
             auto edge_num = edge_id++;
 
+            //alpha's of the darts, we'll need to think of how we assign them, perhaps we need another help structure, or assign it later.
+            int alpha_0_dart_1 = ;
             int alpha_1_dart_1 = ;
             int alpha_2_dart_1 = ;
             int alpha_3_dart_1 = ;
+            int alpha_0_dart_2 = ;
             int alpha_1_dart_2 = ;
             int alpha_2_dart_2 = ;
             int alpha_3_dart_2 = ;
         }
-        test.push_back(face.vertices[0]);
     }
 
     for (auto vertice : test){
