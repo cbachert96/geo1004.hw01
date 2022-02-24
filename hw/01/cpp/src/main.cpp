@@ -136,11 +136,21 @@ int main(int argc, const char * argv[]) {
     Point test (0.0001, 0.0002,0.0003);
     //make it into a string and add it to the unordered map
     unique_vertices[(make_string(test))] = 1;
+//    unique_vertices[(make_string(test))] = 2;
     //print the unordered map
     print_map(unique_vertices);
 
+    //check if a value is inside the unordered map.
+    std::cout<<"Value of key unique_vertices[(make_string(test))] = "<< unique_vertices.at((make_string(test)))std::endl;
+    // to check if a key is already in the unordered map.
+    if (unique_vertices.count((make_string(test)))) {
+        std::cout << "Key found";
+    }
+    else {
+        std::cout<< "Key not found";
+    }
 
-//    unique_vertices[(1,2,3)] =
+
     output_volume.emplace_back(0,0);
 
     //loop through the faces vector to build the structure.
@@ -151,6 +161,12 @@ int main(int argc, const char * argv[]) {
         output_faces.emplace_back(face_num, dart_on_face);
         //loop through the vertices in a face, to make the other structures
         for (int i = 0; i<face.vertices.size(); i++){
+            // check if this edge has already been visited:
+            if (unique_vertices.count((make_string(face.vertices[i].point)))) {
+                std::cout << "Key found";
+
+            }
+
             //assign id's, it's just a number that goes up 1 each time it's called.
             auto dart_1 = dart_id++;
             auto dart_2 = dart_id++;
