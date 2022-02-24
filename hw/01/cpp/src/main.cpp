@@ -5,6 +5,53 @@
 #include <vector>
 #include <sstream>
 #include "Gmap.h"
+#include <unordered_map>
+#include <iomanip>
+
+//struct point_Key
+//{
+//    Point point;
+//
+//    bool operator==(const point_Key &other) const
+//    { return (point == other.point);
+//    }
+//};
+//
+//    template <>
+//    struct std::hash<point_Key>
+//    {
+//        std::size_t operator()(const point_Key& k) const
+//        {
+//            using std::size_t;
+//            using std::hash;
+//            using std::string;
+//            using Point;
+//
+//            // Compute individual hash values for first,
+//            // second and third and combine them using XOR
+//            // and bit shifting:
+//
+//            return ((hash<Point>()(k.first)
+//                     ^ (hash<string>()(k.second) << 1)) >> 1)
+//                   ^ (hash<int>()(k.third) << 1);
+//        }
+//    };
+
+
+std::string make_string(Point point){
+
+    std::stringstream stream;
+    stream << std::fixed << std::setprecision(5) << point.x << point.y << point.z;
+    std::string stringed = stream.str();
+    return stringed;
+}
+
+void print_map(std::unordered_map<std::string, int> const &m)
+{
+    for (auto const &pair: m) {
+        std::cout << "{" << pair.first << ": " << pair.second << "}\n";
+    }
+}
 
 int id =0;
 int dart_id = 0;
@@ -79,6 +126,21 @@ int main(int argc, const char * argv[]) {
     std::vector<Edge> output_edges;
     std::vector<Dart> output_darts;
 
+    //make the unordered maps
+    std::unordered_map<std::string, int> unique_vertices = {};
+    std::unordered_map<float, int> unique_edges = {};
+    std::unordered_map<int, int> alpha_2_finder = {};
+
+    //unordered map testing:
+    // add a point to test it on
+    Point test (0.0001, 0.0002,0.0003);
+    //make it into a string and add it to the unordered map
+    unique_vertices[(make_string(test))] = 1;
+    //print the unordered map
+    print_map(unique_vertices);
+
+
+//    unique_vertices[(1,2,3)] =
     output_volume.emplace_back(0,0);
 
     //loop through the faces vector to build the structure.
@@ -97,7 +159,7 @@ int main(int argc, const char * argv[]) {
 
             point_Vertex vertice_1;
             point_Vertex vertice_2;
-            
+
             //two vertices to make an edge in between, 1st with 2nd and so on.
             if (i< (face.vertices.size() -1)){
                 auto vertice_1 = face.vertices[i];
@@ -121,7 +183,7 @@ int main(int argc, const char * argv[]) {
                 int alpha_2_dart_2 = 0;
                 int alpha_3_dart_2 = 0;
                 output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_1, alpha_1_dart_1, alpha_2_dart_1, alpha_3_dart_1);
-                output_darts.emplace_back(dart_2,vertex_num, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
+                output_darts.emplace_back(dart_2,vertex_num+1, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
                 }
 
             //if we're at the final vertex, the last dart, let's say 7 needs to have 0 as the next, and not 8
@@ -135,7 +197,7 @@ int main(int argc, const char * argv[]) {
                 auto alpha_2_dart_2 = 0;
                 int alpha_3_dart_2 = 0;
                 output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_1, alpha_1_dart_1, alpha_2_dart_1, alpha_3_dart_1);
-                output_darts.emplace_back(dart_2,vertex_num, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
+                output_darts.emplace_back(dart_2,vertex_num+1, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
             }
             else{
                 auto alpha_0_dart_1 = dart_1 +1;
@@ -147,7 +209,7 @@ int main(int argc, const char * argv[]) {
                 int alpha_2_dart_2 = 0;
                 int alpha_3_dart_2 = 0;
                 output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_1, alpha_1_dart_1, alpha_2_dart_1, alpha_3_dart_1);
-                output_darts.emplace_back(dart_2,vertex_num, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
+                output_darts.emplace_back(dart_2,vertex_num+1, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
             }
         }
     }

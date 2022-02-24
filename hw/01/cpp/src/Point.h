@@ -37,11 +37,15 @@ struct Point {
     y=other.y;
     z=other.z;
   }
-  
-  // addition operator (yields a new point)
-  const Point operator+(const Point &other) const {
-    return Point(x+other.x, y+other.y, z+other.z);
-  }
+
+    // addition operator (yields a new point)
+    const Point operator+(const Point &other) const {
+        return Point(x+other.x, y+other.y, z+other.z);
+    }
+
+    bool operator ==(const Point &other) const{
+        return (x == other.x and y ==other.y and z ==other.z);
+    }
   
   // assignment/addition operator. Adds other point to this point.
   void operator+=(const Point &other) {
@@ -69,6 +73,7 @@ struct Point {
   float dot(const Point &other) const {
     return x*other.x + y*other.y + z*other.z;
   }
+
   
   // cross product operator
   const Point cross(const Point &other) const {
