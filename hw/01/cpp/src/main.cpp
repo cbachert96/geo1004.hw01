@@ -95,6 +95,9 @@ int main(int argc, const char * argv[]) {
             auto vertex_num = vector_id++;
             auto edge_num = edge_id++;
 
+            point_Vertex vertice_1;
+            point_Vertex vertice_2;
+            
             //two vertices to make an edge in between, 1st with 2nd and so on.
             if (i< (face.vertices.size() -1)){
                 auto vertice_1 = face.vertices[i];
@@ -118,7 +121,7 @@ int main(int argc, const char * argv[]) {
                 int alpha_2_dart_2 = 0;
                 int alpha_3_dart_2 = 0;
                 output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_1, alpha_1_dart_1, alpha_2_dart_1, alpha_3_dart_1);
-                output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
+                output_darts.emplace_back(dart_2,vertex_num, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
                 }
 
             //if we're at the final vertex, the last dart, let's say 7 needs to have 0 as the next, and not 8
@@ -132,7 +135,7 @@ int main(int argc, const char * argv[]) {
                 auto alpha_2_dart_2 = 0;
                 int alpha_3_dart_2 = 0;
                 output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_1, alpha_1_dart_1, alpha_2_dart_1, alpha_3_dart_1);
-                output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
+                output_darts.emplace_back(dart_2,vertex_num, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
             }
             else{
                 auto alpha_0_dart_1 = dart_1 +1;
@@ -144,68 +147,65 @@ int main(int argc, const char * argv[]) {
                 int alpha_2_dart_2 = 0;
                 int alpha_3_dart_2 = 0;
                 output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_1, alpha_1_dart_1, alpha_2_dart_1, alpha_3_dart_1);
-                output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
+                output_darts.emplace_back(dart_2,vertex_num, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
             }
         }
     }
 
-        //vertex output
-        std::ofstream vertice_output;
-        vertice_output.open(file_out_csv_0);
-        vertice_output << "ID, dart, x, y, z\n";
-        for (auto vertice: vertices) {
-            vertice_output << id++ << ", " << "dart" << ", " << vertice.x << ", " << vertice.y << ", " << vertice.z
-                           << std::endl;
-        }
-        vertice_output.close();
+    //vertex output
+    std::ofstream vertice_output;
+    vertice_output.open(file_out_csv_0);
+    vertice_output << "ID, dart\n";
+    for (auto vertice: output_vertices) {
+        vertice_output << vertice.id << ", " << vertice.dart << ", " << vertice.x << ", " << vertice.y << ", " << vertice.z
+                       << std::endl;
+    }
+    vertice_output.close();
 
     //Dart output
     std::ofstream dart_output;
     dart_output.open (file_out_csv_d);
     dart_output << "ID, a0, a1, a2, a3, v, e, f\n";
     for (auto dart : output_darts){
-        dart_output<<dart.id<<dart.alpha_0<<dart.alpha_1<<dart.alpha_2<<dart.alpha_3<<dart.vertice<<dart.edge<<dart.face<<std::endl;
+        dart_output<<dart.id<< ", "<<dart.alpha_0<< ", "<<dart.alpha_1<< ", "<<dart.alpha_2<< ", "<<dart.alpha_3<< ", "<<dart.vertice<< ", "<<dart.edge<< ", "<<dart.face<<std::endl;
     }
     dart_output.close();
 
-//    //edge output
-//    std::ofstream edge_output;
-//    edge_output.open (file_out_csv_1);
-//    edge_output << "ID, dart, x, y, z\n";
-//    for (auto edge : edges){
-//        edge_output<<id++<<", "<<"dart"<<", "<<vertice.x <<", "<<vertice.y<<", "<<vertice.z<<std::endl;
-//    }
-//    edge_output.close();
-//
-        //face output
-        std::ofstream face_output;
-        face_output.open(file_out_csv_2);
-        face_output << "ID, dart, x, y, z\n";
-        for (auto &face: faces) {
-            for (auto vertex: face.vertices)
-                face_output << id++ << ", " << vertex.x << std::endl;
-//            std::cout<<vertex<<std::endl;
+    //edge output
+    std::ofstream edge_output;
+    edge_output.open (file_out_csv_1);
+    edge_output << "ID, dart\n";
+    for (auto edge : output_edges){
+        edge_output<<edge.id<<", "<<edge.dart<<std::endl;
+    }
+    edge_output.close();
 
-        }
-        face_output.close();
-//
-//    //volume output
-//    std::ofstream volume_output;
-//    volume_output.open (file_out_csv_1);
-//    volume_output << "ID, dart, x, y, z\n";
-//    for (auto volume : volumes){
-//        volume_output<<id++<<", "<<"dart"<<", "<<vertice.x <<", "<<vertice.y<<", "<<vertice.z<<std::endl;
-//    }
-//    volume_output.close();
+    //face output
+    std::ofstream face_output;
+    face_output.open(file_out_csv_2);
+    face_output << "ID, dart\n";
+    for (auto face: output_faces) {
+        face_output << face.id<< ", " << face.dart << std::endl;
+    }
+    face_output.close();
+
+    //volume output
+    std::ofstream volume_output;
+    volume_output.open (file_out_csv_3);
+    volume_output << "ID, dart\n";
+    for (auto volume : output_volume){
+        volume_output<<volume.id<<", "<<volume.dart<<std::endl;
+    }
+    volume_output.close();
 
 
-        // ## Construct generalised map using the structures from Gmap.h ##
+    // ## Construct generalised map using the structures from Gmap.h ##
 
-        // ## Output generalised map to CSV ##
+    // ## Output generalised map to CSV ##
 
-        // ## Create triangles from the darts ##
+    // ## Create triangles from the darts ##
 
-        // ## Write triangles to obj ##
+    // ## Write triangles to obj ##
 
         return 0;
     }
