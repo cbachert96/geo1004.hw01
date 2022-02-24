@@ -41,7 +41,15 @@
 std::string make_string(Point point){
 
     std::stringstream stream;
-    stream << std::fixed << std::setprecision(5) << point.x << point.y << point.z;
+    stream << std::fixed << std::setprecision(4) << point.x << point.y << point.z;
+    std::string stringed = stream.str();
+    return stringed;
+}
+
+std::string make_edge_string(Point point_1, Point point_2){
+
+    std::stringstream stream;
+    stream << std::fixed << std::setprecision(4) << point_1.x << point_1.y << point_1.z<<point_2.x << point_2.y << point_2.z;
     std::string stringed = stream.str();
     return stringed;
 }
@@ -128,27 +136,29 @@ int main(int argc, const char * argv[]) {
 
     //make the unordered maps
     std::unordered_map<std::string, int> unique_vertices = {};
-    std::unordered_map<float, int> unique_edges = {};
+    std::unordered_map<std::string, int> unique_edges = {};
     std::unordered_map<int, int> alpha_2_finder = {};
 
     //unordered map testing:
     // add a point to test it on
     Point test (0.0001, 0.0002,0.0003);
+    Point test_2 (0.04, 0.05, 0.06);
+    std::cout<<make_edge_string(test, test_2);
     //make it into a string and add it to the unordered map
     unique_vertices[(make_string(test))] = 1;
 //    unique_vertices[(make_string(test))] = 2;
     //print the unordered map
     print_map(unique_vertices);
 
-    //check if a value is inside the unordered map.
-    std::cout<<"Value of key unique_vertices[(make_string(test))] = "<< unique_vertices.at((make_string(test)))std::endl;
-    // to check if a key is already in the unordered map.
-    if (unique_vertices.count((make_string(test)))) {
-        std::cout << "Key found";
-    }
-    else {
-        std::cout<< "Key not found";
-    }
+//    //check if a value is inside the unordered map.
+//    std::cout<<"Value of key unique_vertices[(make_string(test))] = "<< unique_vertices.at((make_string(test)))<<std::endl;
+//    // to check if a key is already in the unordered map.
+//    if (unique_vertices.count((make_string(test)))) {
+//        std::cout << "Key found";
+//    }
+//    else {
+//        std::cout<< "Key not found";
+//    }
 
 
     output_volume.emplace_back(0,0);
@@ -162,19 +172,25 @@ int main(int argc, const char * argv[]) {
         //loop through the vertices in a face, to make the other structures
         for (int i = 0; i<face.vertices.size(); i++){
             // check if this edge has already been visited:
-            if (unique_vertices.count((make_string(face.vertices[i].point)))) {
-                std::cout << "Key found";
-
+            auto str_vertex = make_string(face.vertices[i].point);
+            int vertex_num;
+            if (unique_vertices.count(str_vertex)) {
+//                std::cout << "Key found";
+                vertex_num = unique_vertices.at(str_vertex);
+            }
+            else{
+                auto vertex_num = vector_id++;
+                unique_vertices[str_vertex] = vertex_num;
             }
 
             //assign id's, it's just a number that goes up 1 each time it's called.
             auto dart_1 = dart_id++;
             auto dart_2 = dart_id++;
-            auto vertex_num = vector_id++;
-            auto edge_num = edge_id++;
+
 
             point_Vertex vertice_1;
             point_Vertex vertice_2;
+
 
             //two vertices to make an edge in between, 1st with 2nd and so on.
             if (i< (face.vertices.size() -1)){
@@ -186,6 +202,20 @@ int main(int argc, const char * argv[]) {
                 auto vertice_1 = face.vertices[i];
                 auto vertice_2 = face.vertices[0];
             }
+
+            auto str_edge = make_edge_string(vertice_1.point, vertice_2.point);
+            auto str_edge_reversed = make_edge_string(vertice_2.point, vertice_1.point);
+            int edge_num;
+            if (unique_edges.count(str_edge)) {
+//                std::cout << "Key found";
+                edge_num = unique_vertices.at(str_edge);
+            }
+            else{
+                auto edge_num = edge_id++;
+                unique_vertices[str_edge] = edge_num;
+                unique_vertices[str_edge_reversed] = edge_num;
+            }
+
             output_vertices.emplace_back(vertex_num, dart_1, face.vertices[i].x, face.vertices[i].y, face.vertices[i].z);
             output_edges.emplace_back(edge_num, dart_1);
             //for the first dart, we need the final dart, that's why de do 2* the length of the vector -1. So dart 0 has 7 as alpha_0 in case of 4 vertices.
