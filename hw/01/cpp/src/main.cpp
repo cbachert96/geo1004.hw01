@@ -61,7 +61,7 @@ void print_map(std::unordered_map<std::string, int> const &m)
     }
 }
 
-int id =0;
+
 int dart_id = 0;
 int face_id = 0;
 int edge_id = 0;
@@ -81,7 +81,7 @@ int main(int argc, const char * argv[]) {
     stream_in.open(file_in);
     std::vector<point_Vertex> vertices;
     std::vector<vertex_Face> faces;
-    std::vector<index_Face> indices ;
+
     if (stream_in.is_open()) {
         std::string line;
         while (getline(stream_in, line)) {
@@ -107,25 +107,6 @@ int main(int argc, const char * argv[]) {
             }
         }
     }
-    //another stream, because I can't get the previous thing to read the if(word =="f") part twice
-    std::ifstream stream_in_2;
-    stream_in_2.open(file_in);
-    if (stream_in_2.is_open()) {
-        std::string line;
-        while (getline(stream_in_2, line)) {
-            std::istringstream iss(line);
-            std::string word;
-            iss >> word;
-            if (word == "f") {
-                //vector that holds the indices of the faces, other thant the previous that stores the vertexes itself.
-                std::vector<int> face_indices;
-                //loop through the line
-                while (iss >> word) face_indices.push_back(std::stoi(word));
-                //place the indexes in the
-                indices.emplace_back(face_indices[0], face_indices[1], face_indices[2], face_indices[3]);
-            }
-        }
-    }
 
     //vectors to hold the output data of the designated types.
     std::vector<Vertex> output_vertices;
@@ -137,31 +118,8 @@ int main(int argc, const char * argv[]) {
     //make the unordered maps
     std::unordered_map<std::string, int> unique_vertices = {};
     std::unordered_map<std::string, int> unique_edges = {};
-    std::unordered_map<int, int> alpha_2_finder = {};
-
-    //unordered map testing:
-    // add a point to test it on
-    Point test (0.0001, 0.0002,0.0003);
-    Point test_2 (0.04, 0.05, 0.06);
-    std::cout<<make_edge_string(test, test_2);
-    //make it into a string and add it to the unordered map
-    unique_vertices[(make_string(test))] = 1;
-//    unique_vertices[(make_string(test))] = 2;
-    //print the unordered map
-    print_map(unique_vertices);
-
-//    //check if a value is inside the unordered map.
-//    std::cout<<"Value of key unique_vertices[(make_string(test))] = "<< unique_vertices.at((make_string(test)))<<std::endl;
-//    // to check if a key is already in the unordered map.
-//    if (unique_vertices.count((make_string(test)))) {
-//        std::cout << "Key found";
-//    }
-//    else {
-//        std::cout<< "Key not found";
-//    }
-
-
     output_volume.emplace_back(0,0);
+
 
     //loop through the faces vector to build the structure.
     for (auto face: faces){
@@ -178,9 +136,12 @@ int main(int argc, const char * argv[]) {
             int vertex_num;
             if (unique_vertices.count(str_vertex)) {
                 vertex_num = unique_vertices.at(str_vertex);
+
+//                std::cout<<"if"<< vertex_num<<std::endl;
             }
             else{
                 vertex_num = vector_id++;
+//                std::cout<<"else"<< vertex_num<<std::endl;
                 unique_vertices[str_vertex] = vertex_num;
                 output_vertices.emplace_back(vertex_num, dart_1, face.vertices[i].x, face.vertices[i].y, face.vertices[i].z);
             }
@@ -200,13 +161,12 @@ int main(int argc, const char * argv[]) {
                 vertice_2 = face.vertices[0];
             }
 
-            std::cout<<vertice_1;
             auto str_edge = make_edge_string(vertice_1.point, vertice_2.point);
             auto str_edge_reversed = make_edge_string(vertice_2.point, vertice_1.point);
             int edge_num;
             if (unique_edges.count(str_edge)) {
-//                std::cout << "Key found";
                 edge_num = unique_vertices.at(str_edge);
+                std::cout<<"test"<<std::endl;
             }
             else{
                 edge_num = edge_id++;
@@ -231,16 +191,35 @@ int main(int argc, const char * argv[]) {
             //if we're at the final vertex, the last dart, let's say 7 needs to have 0 as the next, and not 8
             else if (i == face.vertices.size()-1){
                 alpha_1_dart_1 = dart_1 -1;
-                alpha_1_dart_2 = dart_2 - (2*face.vertices.size()+1);
+                alpha_1_dart_2 = (dart_2 - (2*face.vertices.size())+1);
             }
             else{
                 alpha_1_dart_1 = dart_1 -1;
                 alpha_1_dart_2 = dart_2 +1;
             }
+//            std::cout<<vertex_num<<std::endl;
             output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_1, alpha_1_dart_1, alpha_2_dart_1, alpha_3_dart_1);
             output_darts.emplace_back(dart_2,vertex_num+1, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
         }
     }
+
+    std::vector<Dart> alpha_darts;
+    //get alpha 2 values of darts.
+//    for (auto dart_1 : output_darts) {
+//        for (auto &dart_2: output_darts) {
+//            if (dart_1.id != dart_2.id) {
+//                if (dart_1.vertice == dart_2.vertice && dart_1.edge == dart_2.edge) {
+//                    alpha_darts.emplace_back(
+//                            Dart(dart_1.id, dart_1.vertice, dart_1.edge, dart_1.face, dart_1.alpha_0, dart_1.alpha_1, dart_2.id,
+//                                 dart_1.alpha_2));
+////                    std::cout<<dart_1<<std::endl;
+////                    dart_1 = (Dart(dart_1.id, dart_1.vertice, dart_1.edge, dart_1.face, dart_1.alpha_0, dart_1.alpha_1, dart_2.alpha_2, dart_1.alpha_2));
+////                            Dart(const int &id, const int &vertice, const int &edge, const int &face, const int &alpha_0, const int &alpha_1, const int &alpha_2, const int &alpha_3){
+////                        std::cout << "test" << std::endl;
+//                }
+//            }
+//        }
+//    }
 
     //vertex output
     std::ofstream vertice_output;
