@@ -53,6 +53,11 @@ struct vertex_Face {
         for (auto& e : a.vertices) os << e.point;
         return os;
     }
+
+    template<typename _InputIterator>
+    _InputIterator begin() {
+        return nullptr;
+    }
 };
 
 //output structures: these are the actual output structures, prefereably only hold output data.

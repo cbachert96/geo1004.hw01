@@ -7,6 +7,7 @@
 #include "Gmap.h"
 #include <unordered_map>
 #include <iomanip>
+#include <numeric>
 
 //to make a string out of 1 Point
 std::string make_string(Point point){
@@ -203,6 +204,28 @@ int main(int argc, const char * argv[]) {
         }
     }
 
+    std::vector<Point> triangulation;
+    std::unordered_map<std::string, int> triangulation_points ={};
+    //Build OBJ
+    // loop through all the faces
+    for (auto &face:faces){
+        //initialize point to hold the addition of all points, to find barycentric coordinate.
+        Point sum_of_points;
+        //loop through the points in the face, and add them together
+        for (auto& n: face.vertices) {
+            sum_of_points += n.point;
+        }
+
+        //divide by the length of face, to get the barycentric coordinate of the face 1st vertex of triangle
+        auto face_centrepoint = sum_of_points/ face.vertices.size();
+        for (int i = 0; i<face.vertices.size(); i++){\
+        //current point, 2nd vertex of triangle
+            auto currentpoint = face.vertices[i];
+            //barycentric coordinate of edge, 3rd coordinate of triangle.
+            auto point_between_vertices = ((face.vertices[i].point + face.vertices[i+1].point)/2);
+        }
+
+    }
     //vertex output
     std::ofstream vertice_output;
     vertice_output.open(file_out_csv_0);
