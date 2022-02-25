@@ -14,6 +14,7 @@ struct Vertex;
 struct Volume;
 
 //help structures these structures will not be the ouput, but we will use them to make the output structures correctly:
+// help structure point_Vertex is used to store the Vertex data that is read from the OBJ file. This is later used in structure vertex_Face
 struct point_Vertex {
     // the coordinates of this vertex:
     Point point;
@@ -38,8 +39,9 @@ struct point_Vertex {
     }
 };
 
+//help structure point_Vertex is used to build the structures on, by iterating over the 4 points that make a face.
 struct vertex_Face {
-    // int of indice of coordinate it's referring to. Could also be a pointer to this indice, might has to be a vector of indices.
+    // a vertex_Face consists of a vector of point_Vertex
     std::vector<point_Vertex> vertices;
 
     // constructor with arguments
@@ -54,6 +56,7 @@ struct vertex_Face {
 };
 
 //output structures: these are the actual output structures, prefereably only hold output data.
+//Structure Dart that holds all the relevant values for the Dart in Gmap
 struct Dart {
     int id;
     int vertice;
@@ -93,45 +96,7 @@ struct Dart {
     }
 };
 
-struct Dart_2 {
-    int id;
-    int vertice;
-    int edge;
-    int face;
-    int alpha_0;
-    int alpha_1;
-    int alpha_2;
-    int alpha_3;
-
-    // constructor with arguments
-    Dart_2(const int &id, const int &vertice, const int &edge, const int &face, const int &alpha_0, const int &alpha_1, const int &alpha_2, const int &alpha_3){
-        this -> id =id;
-        this -> vertice = vertice;
-        this -> edge = edge;
-        this -> face = face;
-        this -> alpha_0 = alpha_0;
-        this -> alpha_1 = alpha_1;
-        this -> alpha_2 = alpha_2;
-        this -> alpha_3 = alpha_3;
-    }
-    void operator=(const Dart_2 &other) {
-        id=other.id;
-        vertice=other.vertice;
-        edge=other.edge;
-        face = other.face;
-        alpha_0 = other.alpha_0;
-        alpha_1 = other.alpha_1;
-        alpha_2 = other.alpha_2;
-        alpha_3 = other.alpha_3;
-    }
-
-    //operator to print the Dart
-    friend std::ostream& operator<<(std::ostream &os, const  Dart_2& rhs){  //for struct output
-        os << "id = "<<rhs.id<< "Vertex = " << rhs.vertice << "edge = " << rhs.edge << "face = " << rhs.face<< "alpha_0 = " << rhs.alpha_0<< "alpha_1 = " << rhs.alpha_1<< "alpha_2 = " << rhs.alpha_2<< "alpha_3 = " << rhs.alpha_3;
-        return os;
-    }
-};
-
+//Structure Vertex that holds all the relevant values for the Vertex in Gmap
 struct Vertex{
     int id;
     int dart;
@@ -151,6 +116,8 @@ struct Vertex{
         return os;
     }
 };
+
+//Structure Edge that holds all the relevant values for the Edge in Gmap
 struct Edge {
     int id;
     int dart;
@@ -166,6 +133,7 @@ struct Edge {
 
 };
 
+//Structure Face that holds all the relevant values for the Face in Gmap
 struct Face{
     int id;
     int dart;
@@ -180,6 +148,7 @@ struct Face{
     }
 
 };
+//Structure Volume that holds all the relevant values for the Volume in Gmap
 struct Volume {
     int id;
     int dart;
