@@ -49,7 +49,7 @@ std::string make_string(Point point){
 std::string make_edge_string(Point point_1, Point point_2){
 
     std::stringstream stream;
-    stream << std::fixed << std::setprecision(4) << point_1.x << point_1.y << point_1.z<<point_2.x << point_2.y << point_2.z;
+    stream << std::fixed << std::setprecision(3) << point_1.x << point_1.y << point_1.z<<point_2.x << point_2.y << point_2.z;
     std::string stringed = stream.str();
     return stringed;
 }
@@ -162,16 +162,16 @@ int main(int argc, const char * argv[]) {
             }
 
             auto str_edge = make_edge_string(vertice_1.point, vertice_2.point);
-            auto str_edge_reversed = make_edge_string(vertice_2.point, vertice_1.point);
+            auto str_edge_rev = make_edge_string(vertice_2.point, vertice_1.point);
             int edge_num;
             if (unique_edges.count(str_edge)) {
-                edge_num = unique_vertices.at(str_edge);
-                std::cout<<"test"<<std::endl;
+                edge_num = unique_edges.at(str_edge);
+//                std::cout<<"test"<<std::endl;
             }
             else{
                 edge_num = edge_id++;
-                unique_vertices[str_edge] = edge_num;
-                unique_vertices[str_edge_reversed] = edge_num;
+                unique_edges[str_edge] = edge_num;
+                unique_edges[str_edge_rev] = edge_num;
                 output_edges.emplace_back(edge_num, dart_1);
             }
             int alpha_0_dart_1 = dart_1 +1;
@@ -204,22 +204,31 @@ int main(int argc, const char * argv[]) {
     }
 
     std::vector<Dart> alpha_darts;
-    //get alpha 2 values of darts.
-//    for (auto dart_1 : output_darts) {
-//        for (auto &dart_2: output_darts) {
-//            if (dart_1.id != dart_2.id) {
-//                if (dart_1.vertice == dart_2.vertice && dart_1.edge == dart_2.edge) {
+//    get alpha 2 values of darts.
+    for (auto &dart_1 : output_darts) {
+        for (auto &dart_2: output_darts) {
+            if (dart_1.id != dart_2.id) {
+                if (dart_1.vertice == dart_2.vertice && dart_1.edge == dart_2.edge) {
+                    dart_1.alpha_2 = dart_2.id;
+//                    dart_1 = Dart(dart_1.id, dart_1.vertice, dart_1.edge, dart_1.face, dart_1.alpha_0, dart_1.alpha_1,
+//                                  dart_2.id,
+//                                  dart_1.alpha_3);
+                    alpha_darts.emplace_back(
+                            Dart(dart_1.id, dart_1.vertice, dart_1.edge, dart_1.face, dart_1.alpha_0, dart_1.alpha_1,
+                                 dart_2.id,
+                                 dart_1.alpha_3));
+                }
+//                else{
 //                    alpha_darts.emplace_back(
-//                            Dart(dart_1.id, dart_1.vertice, dart_1.edge, dart_1.face, dart_1.alpha_0, dart_1.alpha_1, dart_2.id,
-//                                 dart_1.alpha_2));
-////                    std::cout<<dart_1<<std::endl;
-////                    dart_1 = (Dart(dart_1.id, dart_1.vertice, dart_1.edge, dart_1.face, dart_1.alpha_0, dart_1.alpha_1, dart_2.alpha_2, dart_1.alpha_2));
-////                            Dart(const int &id, const int &vertice, const int &edge, const int &face, const int &alpha_0, const int &alpha_1, const int &alpha_2, const int &alpha_3){
-////                        std::cout << "test" << std::endl;
+//                            Dart(dart_1.id, dart_1.vertice, dart_1.edge, dart_1.face, dart_1.alpha_0, dart_1.alpha_1,
+//                                 dart_1.alpha_2,
+//                                 dart_1.alpha_3));
 //                }
-//            }
-//        }
-//    }
+
+                }
+            }
+
+    }
 
     //vertex output
     std::ofstream vertice_output;
