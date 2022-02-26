@@ -39,6 +39,7 @@ struct point_Vertex {
     }
 };
 
+
 //help structure point_Vertex is used to build the structures on, by iterating over the 4 points that make a face.
 struct vertex_Face {
     // a vertex_Face consists of a vector of point_Vertex

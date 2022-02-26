@@ -204,11 +204,13 @@ int main(int argc, const char * argv[]) {
         }
     }
 
+    int obj_index = 1;
+    std::vector<std::vector<int>> face_indexing;
     std::vector<Point> triangulation;
     std::unordered_map<std::string, int> triangulation_points ={};
     //Build OBJ
     // loop through all the faces
-    for (auto &face:faces){
+    for (auto face:faces){
         //initialize point to hold the addition of all points, to find barycentric coordinate.
         Point sum_of_points;
         //loop through the points in the face, and add them together
@@ -217,15 +219,48 @@ int main(int argc, const char * argv[]) {
         }
 
         //divide by the length of face, to get the barycentric coordinate of the face 1st vertex of triangle
-        auto face_centrepoint = sum_of_points/ face.vertices.size();
-        for (int i = 0; i<face.vertices.size(); i++){\
-        //current point, 2nd vertex of triangle
-            auto currentpoint = face.vertices[i];
-            //barycentric coordinate of edge, 3rd coordinate of triangle.
-            auto point_between_vertices = ((face.vertices[i].point + face.vertices[i+1].point)/2);
+        auto face_centroid = sum_of_points/ face.vertices.size();
+        int index_face_centroid = obj_index++;
+        triangulation_points[make_string(face_centroid)] = index_face_centroid++;
+        triangulation.emplace_back(face_centroid);
+        for (int i = 0; i<face.vertices.size(); i++){
+            std::vector<int> index_cur_triangle;
+            auto currentpoint = face.vertices[i].point;
+            Point point_between_vertices;
+            //two vertices to make an edge in between, 1st with 2nd and so on.
+            if (i< (face.vertices.size() -1)){
+                point_between_vertices = ((face.vertices[i].point + face.vertices[i+1].point)/2);
+            }
+                //if we are at the final vertice, we need to make an edge between the final and first one.
+            else{
+                point_between_vertices = ((face.vertices[i].point + face.vertices[0].point)/2);
+            }
+            int index_currentpoint;
+            if (triangulation_points.count(make_string(currentpoint))){
+                index_currentpoint = triangulation_points.at(make_string(currentpoint));
+            }
+            else{
+                index_currentpoint = obj_index++;
+                triangulation_points[make_string(currentpoint)] = index_currentpoint;
+                triangulation.emplace_back(currentpoint);
+            }
+            int index_point_between_vertices;
+            if (triangulation_points.count(make_string(point_between_vertices))){
+                index_point_between_vertices = triangulation_points.at(make_string(point_between_vertices));
+            }
+            else{
+                index_point_between_vertices = obj_index++;
+                triangulation_points[make_string(point_between_vertices)] = index_currentpoint;
+                triangulation.emplace_back(point_between_vertices);
+            }
+            index_cur_triangle.emplace_back(index_currentpoint);
+            index_cur_triangle.emplace_back(index_face_centroid);
+            index_cur_triangle.emplace_back(index_point_between_vertices);
+            face_indexing.emplace_back(index_cur_triangle);
         }
-
     }
+
+    std::cout<<face_indexing.size();
     //vertex output
     std::ofstream vertice_output;
     vertice_output.open(file_out_csv_0);
@@ -272,14 +307,16 @@ int main(int argc, const char * argv[]) {
     }
     volume_output.close();
 
-
-    // ## Construct generalised map using the structures from Gmap.h ##
-
-    // ## Output generalised map to CSV ##
-
-    // ## Create triangles from the darts ##
-
-    // ## Write triangles to obj ##
+    //OBJ output
+    std::ofstream obj_output;
+    obj_output.open (file_out_obj);
+    for (auto vertex : triangulation){
+        obj_output<<"v "<<vertex.x<< " "<< vertex.y<<" "<< vertex.z<<std::endl;
+    }
+    for (auto indices: face_indexing){
+        obj_output<<"f "<<indices[0]<<" "<< indices[1]<<" "<< indices[2]<<std::endl;
+    }
+    obj_output.close();
 
         return 0;
     }
