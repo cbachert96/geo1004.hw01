@@ -232,19 +232,23 @@ int main(int argc, const char * argv[]) {
         for (int i = 0; i<face.vertices.size(); i++){
             //make vector of indexes for current triangle
             std::vector<int> index_cur_triangle;
+            std::vector<int> index_next_triangle;
             //get current vertex
             auto currentpoint = face.vertices[i].point;
+            Point nextpoint;
             //point to hold the barycentric coordinate of an edge
             Point point_between_vertices;
             //two vertices to make an edge in between, 1st with 2nd and so on.
             if (i< (face.vertices.size() -1)){
+                nextpoint = face.vertices[i+1].point;
                 //barycentric coordinate by adding together, then dividing
-                point_between_vertices = ((face.vertices[i].point + face.vertices[i+1].point)/2);
+                point_between_vertices = ((currentpoint + nextpoint)/2);
             }
                 //if we are at the final vertice, we need to make an edge between the final and first one.
             else{
                 //barycentric coordinate by adding together, then dividing
-                point_between_vertices = ((face.vertices[i].point + face.vertices[0].point)/2);
+                nextpoint = face.vertices[0].point;
+                point_between_vertices = ((currentpoint + nextpoint)/2);
             }
             // index for currentpoint
             int index_currentpoint;
@@ -262,6 +266,22 @@ int main(int argc, const char * argv[]) {
                 //place the point in vertex list.
                 triangulation.emplace_back(currentpoint);
             }
+            // index for nexpoint
+            int index_nextpoint;
+            // check if the vertex has already been added.
+            if (triangulation_points.count(make_string(nextpoint))){
+                //if it has, get the index of that vertex
+                index_nextpoint = triangulation_points.at(make_string(nextpoint));
+            }
+                //if not
+            else{
+                //make index
+                index_nextpoint = obj_index++;
+                //add vertex to unordered map
+                triangulation_points[make_string(nextpoint)] = index_nextpoint;
+                //place the point in vertex list.
+                triangulation.emplace_back(nextpoint);
+            }
             //index for barycentric coordinate of edge
             int index_point_between_vertices;
             // check if vertex has already been visited
@@ -276,11 +296,18 @@ int main(int argc, const char * argv[]) {
                 triangulation.emplace_back(point_between_vertices);
             }
             // place indexes in vector of indexes from current triangle
+            //triangle between current point, edge centroid and face centroid
             index_cur_triangle.emplace_back(index_currentpoint);
             index_cur_triangle.emplace_back(index_face_centroid);
             index_cur_triangle.emplace_back(index_point_between_vertices);
-            //place the vertex in the vector of vectors of indexes
+            //triangle between edge centroid, face centroid and next vertex
+            index_next_triangle.emplace_back(index_face_centroid);
+            index_next_triangle.emplace_back(index_point_between_vertices);
+            index_next_triangle.emplace_back(index_nextpoint);
+            //place the vertices in the vector of vectors of indexes
             face_indexing.emplace_back(index_cur_triangle);
+            face_indexing.emplace_back(index_next_triangle);
+
         }
     }
 
