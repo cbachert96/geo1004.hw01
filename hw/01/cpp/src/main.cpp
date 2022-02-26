@@ -203,12 +203,16 @@ int main(int argc, const char * argv[]) {
             }
         }
     }
-
-    int obj_index = 1;
-    std::vector<std::vector<int>> face_indexing;
-    std::vector<Point> triangulation;
-    std::unordered_map<std::string, int> triangulation_points ={};
     //Build OBJ
+
+    //indexing of vertices
+    int obj_index = 0;
+    //vector to hold indexes of new faces
+    std::vector<std::vector<int>> face_indexing;
+    //vector to hold all points
+    std::vector<Point> triangulation;
+    //unordered map to check for duplicates
+    std::unordered_map<std::string, int> triangulation_points ={};
     // loop through all the faces
     for (auto face:faces){
         //initialize point to hold the addition of all points, to find barycentric coordinate.
@@ -217,50 +221,69 @@ int main(int argc, const char * argv[]) {
         for (auto& n: face.vertices) {
             sum_of_points += n.point;
         }
-
         //divide by the length of face, to get the barycentric coordinate of the face 1st vertex of triangle
         auto face_centroid = sum_of_points/ face.vertices.size();
+        //give index to barycentric coordinate
         int index_face_centroid = obj_index++;
+        //place barycentric coordinate in unordered map
         triangulation_points[make_string(face_centroid)] = index_face_centroid++;
         triangulation.emplace_back(face_centroid);
+        //loop through all the vertices in a face
         for (int i = 0; i<face.vertices.size(); i++){
+            //make vector of indexes for current triangle
             std::vector<int> index_cur_triangle;
+            //get current vertex
             auto currentpoint = face.vertices[i].point;
+            //point to hold the barycentric coordinate of an edge
             Point point_between_vertices;
             //two vertices to make an edge in between, 1st with 2nd and so on.
             if (i< (face.vertices.size() -1)){
+                //barycentric coordinate by adding together, then dividing
                 point_between_vertices = ((face.vertices[i].point + face.vertices[i+1].point)/2);
             }
                 //if we are at the final vertice, we need to make an edge between the final and first one.
             else{
+                //barycentric coordinate by adding together, then dividing
                 point_between_vertices = ((face.vertices[i].point + face.vertices[0].point)/2);
             }
+            // index for currentpoint
             int index_currentpoint;
+            // check if the vertex has already been added.
             if (triangulation_points.count(make_string(currentpoint))){
+                //if it has, get the index of that vertex
                 index_currentpoint = triangulation_points.at(make_string(currentpoint));
             }
+            //if not
             else{
+                //make index
                 index_currentpoint = obj_index++;
+                //add vertex to unordered map
                 triangulation_points[make_string(currentpoint)] = index_currentpoint;
+                //place the point in vertex list.
                 triangulation.emplace_back(currentpoint);
             }
+            //index for barycentric coordinate of edge
             int index_point_between_vertices;
+            // check if vertex has already been visited
             if (triangulation_points.count(make_string(point_between_vertices))){
+                // if so, get the index of that vertex
                 index_point_between_vertices = triangulation_points.at(make_string(point_between_vertices));
             }
             else{
+
                 index_point_between_vertices = obj_index++;
                 triangulation_points[make_string(point_between_vertices)] = index_currentpoint;
                 triangulation.emplace_back(point_between_vertices);
             }
+            // place indexes in vector of indexes from current triangle
             index_cur_triangle.emplace_back(index_currentpoint);
             index_cur_triangle.emplace_back(index_face_centroid);
             index_cur_triangle.emplace_back(index_point_between_vertices);
+            //place the vertex in the vector of vectors of indexes
             face_indexing.emplace_back(index_cur_triangle);
         }
     }
 
-    std::cout<<face_indexing.size();
     //vertex output
     std::ofstream vertice_output;
     vertice_output.open(file_out_csv_0);
