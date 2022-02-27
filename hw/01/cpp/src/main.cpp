@@ -42,13 +42,13 @@ int vector_id = 0;
 
 int main(int argc, const char * argv[]) {
     //input and output files.
-    std::string file_in = "torus.obj";
-    std::string file_out_obj = "torus_triangulated.obj";
-    std::string file_out_csv_d = "torus_darts.csv";
-    std::string file_out_csv_0 = "torus_vertices.csv";
-    std::string file_out_csv_1 = "torus_edges.csv";
-    std::string file_out_csv_2 = "torus_faces.csv";
-    std::string file_out_csv_3 = "torus_volume.csv";
+    std::string file_in = "../../data/torus.obj";
+    std::string file_out_obj = "../../torus_triangulated.obj";
+    std::string file_out_csv_d = "../../torus_darts.csv";
+    std::string file_out_csv_0 = "../../torus_vertices.csv";
+    std::string file_out_csv_1 = "../../torus_edges.csv";
+    std::string file_out_csv_2 = "../../torus_faces.csv";
+    std::string file_out_csv_3 = "../../torus_volume.csv";
 
     // ## Read OBJ file ##
     std::ifstream stream_in;
@@ -81,7 +81,6 @@ int main(int argc, const char * argv[]) {
             }
         }
     }
-
     //vectors to hold the output data of the designated types.
     std::vector<Vertex> output_vertices;
     std::vector<Face> output_faces;
@@ -108,7 +107,7 @@ int main(int argc, const char * argv[]) {
             //For each vertex we will make two faces
             auto dart_1 = dart_id++;
             auto dart_2 = dart_id++;
-            //Make the vertex in a strin, so as to later be able to check if it already exists.
+            //Make the vertex in a string, to be able to check if it already exists at a later point.
             auto str_vertex = make_string(face.vertices[i].point);
             int vertex_num;
             //If the vertice already exists in the unordered map, get the value of vertex_num from the value of the key-value pair.
@@ -187,7 +186,6 @@ int main(int argc, const char * argv[]) {
             output_darts.emplace_back(dart_2,vertex_num+1, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
         }
     }
-
 // get alpha 2 values of darts.
 // for each dart
     for (auto &dart_1 : output_darts) {
@@ -205,84 +203,98 @@ int main(int argc, const char * argv[]) {
     }
     //Build OBJ
 
-    //indexing of vertices
-    int obj_index = 0;
+    //indexing of vertices. Start at 1 as index in obj files also start at 1
+    int obj_index = 1;
     //vector to hold indexes of new faces
     std::vector<std::vector<int>> face_indexing;
-    //vector to hold all points
+    //vector to hold all points of triangulated surface
     std::vector<Point> triangulation;
     //unordered map to check for duplicates
     std::unordered_map<std::string, int> triangulation_points ={};
+
     // loop through all the faces
     for (auto face:faces){
-        //initialize point to hold the addition of all points, to find barycentric coordinate.
+        // initialize point to hold the sum of all points of the face, to find barycentric coordinate.
         Point sum_of_points;
-        //loop through the points in the face, and add them together
+        // loop through the points in the face, and add them together
         for (auto& n: face.vertices) {
             sum_of_points += n.point;
         }
-        //divide by the length of face, to get the barycentric coordinate of the face 1st vertex of triangle
+        // divide by the number of vertices constructing the face, to get the barycentric coordinate of it
         auto face_centroid = sum_of_points/ face.vertices.size();
-        //give index to barycentric coordinate
+        // give index to barycentric coordinate
         int index_face_centroid = obj_index++;
-        //place barycentric coordinate in unordered map
-        triangulation_points[make_string(face_centroid)] = index_face_centroid++;
+
+        // place barycentric coordinate in unordered map
+        triangulation_points[make_string(face_centroid)] = index_face_centroid;
+
+        // add centroid vertex to the vector containing all vertices of triangulated surface
         triangulation.emplace_back(face_centroid);
-        //loop through all the vertices in a face
+
+        // loop through all the vertices in the current face
         for (int i = 0; i<face.vertices.size(); i++){
-            //make vector of indexes for current triangle
+
+            // make vector of indices for current and next triangle
             std::vector<int> index_cur_triangle;
             std::vector<int> index_next_triangle;
-            //get current vertex
+
+            // get current vertex
             auto currentpoint = face.vertices[i].point;
+            // initialise new point for the next point that follows in the original face
             Point nextpoint;
-            //point to hold the barycentric coordinate of an edge
+
+            // point to hold the barycentric coordinate of an edge
             Point point_between_vertices;
-            //two vertices to make an edge in between, 1st with 2nd and so on.
-            if (i< (face.vertices.size() -1)){
+
+            // two vertices to create a point in between. Between 1st and 2nd and so on.
+            if (i< (face.vertices.size() -1)){ // --> i < 3
                 nextpoint = face.vertices[i+1].point;
-                //barycentric coordinate by adding together, then dividing
+                // barycentric coordinate by adding the two points together, then dividing by two to get "middle"
                 point_between_vertices = ((currentpoint + nextpoint)/2);
             }
-                //if we are at the final vertice, we need to make an edge between the final and first one.
+                // if we are at the final vertex, we need to make an edge between the final and first one.
             else{
-                //barycentric coordinate by adding together, then dividing
+                // barycentric coordinate by adding together, then dividing
                 nextpoint = face.vertices[0].point;
                 point_between_vertices = ((currentpoint + nextpoint)/2);
             }
-            // index for currentpoint
+
+            // Initialise variable for the index of currentpoint
             int index_currentpoint;
+
             // check if the vertex has already been added.
             if (triangulation_points.count(make_string(currentpoint))){
-                //if it has, get the index of that vertex
+                // if it has, get the index of that vertex
                 index_currentpoint = triangulation_points.at(make_string(currentpoint));
             }
-            //if not
+            // if not
             else{
-                //make index
+                // make index
                 index_currentpoint = obj_index++;
-                //add vertex to unordered map
+                // add vertex to unordered map
                 triangulation_points[make_string(currentpoint)] = index_currentpoint;
-                //place the point in vertex list.
+                // place the point in vertex list.
                 triangulation.emplace_back(currentpoint);
             }
+
             // index for nexpoint
             int index_nextpoint;
             // check if the vertex has already been added.
             if (triangulation_points.count(make_string(nextpoint))){
-                //if it has, get the index of that vertex
+                // if it has, get the index of that vertex
                 index_nextpoint = triangulation_points.at(make_string(nextpoint));
             }
-                //if not
+                // if not
             else{
-                //make index
+                // make index
                 index_nextpoint = obj_index++;
-                //add vertex to unordered map
+                // add vertex to unordered map
                 triangulation_points[make_string(nextpoint)] = index_nextpoint;
-                //place the point in vertex list.
+                // place the point in vertex list.
                 triangulation.emplace_back(nextpoint);
             }
-            //index for barycentric coordinate of edge
+
+            // index for barycentric coordinate of edge
             int index_point_between_vertices;
             // check if vertex has already been visited
             if (triangulation_points.count(make_string(point_between_vertices))){
@@ -290,28 +302,31 @@ int main(int argc, const char * argv[]) {
                 index_point_between_vertices = triangulation_points.at(make_string(point_between_vertices));
             }
             else{
-
                 index_point_between_vertices = obj_index++;
-                triangulation_points[make_string(point_between_vertices)] = index_currentpoint;
+                triangulation_points[make_string(point_between_vertices)] = index_point_between_vertices;
                 triangulation.emplace_back(point_between_vertices);
             }
+
             // place indexes in vector of indexes from current triangle
-            //triangle between current point, edge centroid and face centroid
-            index_cur_triangle.emplace_back(index_currentpoint);
+            // triangle between face barycenter, current point, edge barycenter
+            // with this order the orientation of the faces is given. The normals all point outwards
             index_cur_triangle.emplace_back(index_face_centroid);
+            index_cur_triangle.emplace_back(index_currentpoint);
             index_cur_triangle.emplace_back(index_point_between_vertices);
-            //triangle between edge centroid, face centroid and next vertex
+
+            // triangle between edge centroid, face centroid and next vertex
             index_next_triangle.emplace_back(index_face_centroid);
             index_next_triangle.emplace_back(index_point_between_vertices);
             index_next_triangle.emplace_back(index_nextpoint);
-            //place the vertices in the vector of vectors of indexes
+
+            // place the vertices in the vector of vectors of indexes
             face_indexing.emplace_back(index_cur_triangle);
             face_indexing.emplace_back(index_next_triangle);
 
         }
     }
 
-    //vertex output
+    // vertex output
     std::ofstream vertice_output;
     vertice_output.open(file_out_csv_0);
     vertice_output << "ID, dart, x, y, z\n";
