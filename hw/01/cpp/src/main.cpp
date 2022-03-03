@@ -1,3 +1,5 @@
+// By Siebren Meines and Carolin Bachert
+
 // some standard libraries that are helpful for reading/writing text files
 #include <iostream>
 #include <fstream>
@@ -84,6 +86,7 @@ int main(int argc, const char * argv[]) {
             }
         }
     }
+
     // vectors to hold the output data of the designated types
     std::vector<Vertex> output_vertices;
     std::vector<Face> output_faces;

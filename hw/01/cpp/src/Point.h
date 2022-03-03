@@ -1,3 +1,5 @@
+// By Siebren Meines and Carolin Bachert
+
 #pragma once
 
 /*
