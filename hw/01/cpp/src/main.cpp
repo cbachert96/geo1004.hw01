@@ -9,7 +9,9 @@
 #include <iomanip>
 #include <numeric>
 
-//to make a string out of 1 Point
+// ## some functions that are needed/helpful throughout the code
+
+// to make a string out of 1 Point
 std::string make_string(Point point){
 
     std::stringstream stream;
@@ -26,7 +28,7 @@ std::string make_edge_string(Point point_1, Point point_2){
     return stringed;
 }
 
-//to print an unordered_map
+// to print an unordered_map
 void print_map(std::unordered_map<std::string, int> const &m)
 {
     for (auto const &pair: m) {
@@ -34,6 +36,7 @@ void print_map(std::unordered_map<std::string, int> const &m)
     }
 }
 
+// initialise ids
 int dart_id = 0;
 int face_id = 0;
 int edge_id = 0;
@@ -41,7 +44,7 @@ int vector_id = 0;
 
 
 int main(int argc, const char * argv[]) {
-    //input and output files.
+    // specify input and output files
     std::string file_in = "../../data/torus.obj";
     std::string file_out_obj = "../../torus_triangulated.obj";
     std::string file_out_csv_d = "../../torus_darts.csv";
@@ -62,7 +65,7 @@ int main(int argc, const char * argv[]) {
             std::istringstream iss(line);
             std::string word;
             iss >> word;
-            //for vertices
+            // for vertices
             if (word == "v") {
                 std::vector<float> coordinates;
                 while (iss >> word) coordinates.push_back(std::stof(word));
@@ -70,92 +73,100 @@ int main(int argc, const char * argv[]) {
                 else vertices.emplace_back();
             }
 
-            //for faces : similar too the vertices we need to retrieve the faces from the OBJ file and store them in the vector faces, made out of Face
+            // for faces : similar to the vertices we need to retrieve the faces from the OBJ file and store them in the vector faces, made out of struct Face (defined in Gmap.h)
             if (word == "f") {
-                //vector to hold the 4 point_vertices of a Face
+                // vector to hold the 4 point_vertices of a Face
                 std::vector<point_Vertex> face_points;
-                //used indexes to get Vertex value.
+                // used indices to get Vertex value
                 while (iss >> word) face_points.push_back((vertices[std::stoi(word)-1]));
                 // place the vector of Vertices in vector faces
                 faces.emplace_back(face_points);
             }
         }
     }
-    //vectors to hold the output data of the designated types.
+    // vectors to hold the output data of the designated types
     std::vector<Vertex> output_vertices;
     std::vector<Face> output_faces;
     std::vector<Edge> output_edges;
     std::vector<Dart> output_darts;
     std::vector<Volume> output_volume;
 
-    // since we only have 1 input file, and one volume, this part is hardcoded.
+    // since we only have 1 input file, and one volume, this part is hardcoded
     output_volume.emplace_back(0,0);
 
-    //make the unordered maps to check if a vertice or edge already exists
+    // make the unordered maps to check if a vertex or edge already exists
     std::unordered_map<std::string, int> unique_vertices = {};
     std::unordered_map<std::string, int> unique_edges = {};
 
-    //loop through the faces vector to build the structures.
+    // loop through the faces vector to build the structures
     for (auto face: faces){
-        //id for face
+
+        // id for face
         auto face_num = face_id++;
         // get a dart that is on the face
         auto dart_on_face = dart_id +1;
         output_faces.emplace_back(face_num, dart_on_face);
-        //loop through the vertices in a face, to make the other structures
+
+        // loop through the vertices in a face, to make the other structures
         for (int i = 0; i<face.vertices.size(); i++){
-            //For each vertex we will make two faces
+
+            // For each vertex we will make two faces
             auto dart_1 = dart_id++;
             auto dart_2 = dart_id++;
-            //Make the vertex in a string, to be able to check if it already exists at a later point.
+            // Make the vertex in a string, to be able to check if it already exists at a later point
             auto str_vertex = make_string(face.vertices[i].point);
             int vertex_num;
-            //If the vertice already exists in the unordered map, get the value of vertex_num from the value of the key-value pair.
+
+            // If the vertex already exists in the unordered map, get the value of vertex_num from the value of the key-value pair.
             if (unique_vertices.count(str_vertex)) {
                 vertex_num = unique_vertices.at(str_vertex);
             }
-            //if it has not already been added.
+
+            // if it has not  been added already
             else{
                 vertex_num = vector_id++;
-                //add it to the unordered map
+                // add it to the unordered map
                 unique_vertices[str_vertex] = vertex_num;
-                //Place the vertex in the vector of Vertices.
+                // Place the vertex in the vector of Vertices.
                 output_vertices.emplace_back(vertex_num, dart_1, face.vertices[i].x, face.vertices[i].y, face.vertices[i].z);
             }
 
-            //Initiate two points, these will form an edge
+            // Initiate two points, these will form an edge
             point_Vertex vertice_1;
             point_Vertex vertice_2;
 
-            //two vertices to make an edge in between, 1st with 2nd and so on.
+            // two vertices to make an edge in between, 1st with 2nd and so on.
             if (i< (face.vertices.size() -1)){
                 vertice_1 = face.vertices[i];
                 vertice_2 = face.vertices[i+1];
             }
-            //if we are at the final vertice, we need to make an edge between the final and first one.
+
+            // if we are at the final vertex, we need to make an edge between the final and first one
             else{
                 vertice_1 = face.vertices[i];
                 vertice_2 = face.vertices[0];
             }
 
-            // make the edge into a string, so as to check whether the edge already exists in the Gmap structure
+            // make the edge into a string, to check whether the edge already exists in the Gmap structure
             auto str_edge = make_edge_string(vertice_1.point, vertice_2.point);
             auto str_edge_rev = make_edge_string(vertice_2.point, vertice_1.point);
             int edge_num;
+
             // check if it already exists
             if (unique_edges.count(str_edge)) {
                 edge_num = unique_edges.at(str_edge);
             }
-            //if not: add both combinations of the edge to the unordered map
+
+            // if not: add both combinations of the edge to the unordered map
             else{
                 edge_num = edge_id++;
                 unique_edges[str_edge] = edge_num;
                 unique_edges[str_edge_rev] = edge_num;
-                //place the edge in the vector of Edges
+                // place the edge in the vector of Edges
                 output_edges.emplace_back(edge_num, dart_1);
             }
 
-            //initialize the alpha's
+            // initialize the alpha's
             int alpha_0_dart_1 = dart_1 +1;
             unsigned long alpha_1_dart_1;
             int alpha_2_dart_1 = 0;
@@ -165,23 +176,25 @@ int main(int argc, const char * argv[]) {
             int alpha_2_dart_2 = 0;
             int alpha_3_dart_2 = 0;
 
-            //for the first dart, we need the final dart, that's why de do 2* the length of the vector -1. So dart 0 has 7 as alpha_0 in case of 4 vertices.
+            // for the first dart, we need the final dart, that's why de do 2* the length of the vector -1. So dart 0 has 7 as alpha_0 in case of 4 vertices.
             if (i ==0){
                 alpha_1_dart_1 = dart_1 + (2*face.vertices.size()-1);
                 alpha_1_dart_2 = dart_2 +1;
                 }
 
-            //if we're at the final vertex, the last dart, let's say 7 needs to have 0 as the next, and not 8
+            // if we're at the final vertex, the last dart, let's say 7 needs to have 0 as the next, and not 8
             else if (i == face.vertices.size()-1){
                 alpha_1_dart_1 = dart_1 -1;
                 alpha_1_dart_2 = (dart_2 - (2*face.vertices.size())+1);
             }
+
             // if not at the first or final vertex
             else{
                 alpha_1_dart_1 = dart_1 -1;
                 alpha_1_dart_2 = dart_2 +1;
             }
-            //place Darts in the vector of Darts.
+
+            // place Darts in the vector of Darts.
             output_darts.emplace_back(dart_1,vertex_num, edge_num, face_num, alpha_0_dart_1, alpha_1_dart_1, alpha_2_dart_1, alpha_3_dart_1);
             output_darts.emplace_back(dart_2,vertex_num+1, edge_num, face_num, alpha_0_dart_2, alpha_1_dart_2, alpha_2_dart_2, alpha_3_dart_2);
         }
@@ -189,27 +202,30 @@ int main(int argc, const char * argv[]) {
 // get alpha 2 values of darts.
 // for each dart
     for (auto &dart_1 : output_darts) {
+
         // loop through all darts
         for (auto &dart_2: output_darts) {
-            //check if it's not the same dart
+
+            // check if it's not the same dart
             if (dart_1.id != dart_2.id) {
-                //if they have the same vertice and the same edge
+                // if they have the same vertex and the same edge
                 if (dart_1.vertice == dart_2.vertice && dart_1.edge == dart_2.edge) {
-                    //assign the ID of dart_2 1 to the alpha_2 value of dart 1
+                    // assign the ID of dart_2 1 to the alpha_2 value of dart 1
                     dart_1.alpha_2 = dart_2.id;
                 }
             }
         }
     }
-    //Build OBJ
 
-    //indexing of vertices. Start at 1 as index in obj files also start at 1
+    // Build OBJ
+
+    // indexing of vertices. Start at 1 as index in obj files also start at 1
     int obj_index = 1;
-    //vector to hold indexes of new faces
+    // vector to hold indexes of new faces
     std::vector<std::vector<int>> face_indexing;
-    //vector to hold all points of triangulated surface
+    // vector to hold all points of triangulated surface
     std::vector<Point> triangulation;
-    //unordered map to check for duplicates
+    // unordered map to check for duplicates
     std::unordered_map<std::string, int> triangulation_points ={};
 
     // loop through all the faces
@@ -336,7 +352,7 @@ int main(int argc, const char * argv[]) {
     }
     vertice_output.close();
 
-    //Dart output
+    // Dart output
     std::ofstream dart_output;
     dart_output.open (file_out_csv_d);
     dart_output << "ID, a0, a1, a2, a3, v, e, f\n";
@@ -345,7 +361,7 @@ int main(int argc, const char * argv[]) {
     }
     dart_output.close();
 
-    //edge output
+    // edge output
     std::ofstream edge_output;
     edge_output.open (file_out_csv_1);
     edge_output << "ID, dart\n";
@@ -354,7 +370,7 @@ int main(int argc, const char * argv[]) {
     }
     edge_output.close();
 
-    //face output
+    // face output
     std::ofstream face_output;
     face_output.open(file_out_csv_2);
     face_output << "ID, dart\n";
@@ -363,7 +379,7 @@ int main(int argc, const char * argv[]) {
     }
     face_output.close();
 
-    //volume output
+    // volume output
     std::ofstream volume_output;
     volume_output.open (file_out_csv_3);
     volume_output << "ID, dart\n";
@@ -372,7 +388,7 @@ int main(int argc, const char * argv[]) {
     }
     volume_output.close();
 
-    //OBJ output
+    // OBJ output
     std::ofstream obj_output;
     obj_output.open (file_out_obj);
     for (auto vertex : triangulation){
